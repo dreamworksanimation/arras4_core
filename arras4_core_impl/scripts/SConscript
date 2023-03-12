@@ -1,0 +1,8 @@
+Import('env')
+
+bin_scripts = [
+	    'setEnvCtx',
+	    'makeEnvCtx.sh'
+]
+
+env.DWAInstallFiles('bin', bin_scripts)

@@ -1,0 +1,18 @@
+# have your node running that it will be reliably used by the tests
+# the test run one at a time so should be able to run on one node
+rez-env arras4_test
+arras4testcases {env} {outputfile} {optional rez prepend}
+e.g. arras4testcases stb myoutput /usr/pic1/prramsey/rez
+
+    {env} is one of the usual uns,stb,prod
+    {outputfile} is where the test output and the session logs are written
+    {optional rez prepend} is a rez path to include in the runs
+          you currently must build arras4_test and convert the py to yaml to
+          to run the tests. the released arras4_test is too old to be useful
+
+
+
+the various run_*.sh files are for running node various ways
+
+misc_commands is a file with various commands lines for running different
+sorts of tests

@@ -1,0 +1,28 @@
+{
+    "name": "exit10_in_onmessage",
+    "description": "does an exit with status 10 in the computation onmessage function",
+    "computations": {
+        "(client)": {
+            "messages": {
+                "testcomp": "*"
+            }
+        }, 
+        "testcomp": {
+            "dso": "libarras4_testcomputation.so", 
+            "entry": "yes", 
+            "forward":true,
+            "errorInOnMessage":"exit10",
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 16384
+                }
+            },
+            "messages": {
+                "(client)": "*" 
+            }
+        }
+    }
+}

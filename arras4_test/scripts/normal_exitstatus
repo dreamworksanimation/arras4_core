@@ -1,0 +1,14 @@
+{
+    "clientDisconnectReason" : "shutdown",
+    "clientStatus" : "connected",
+    "computations" : [
+        {"compStatus" : "",
+         "execStatus" : "stopped",
+         "hyperthreaded" : false,
+         "name" : "testcomp",
+         "signal": "not set",
+         "stoppedReason" : "terminated as requested"
+    } ]
+    "execStatus":"stopped",
+    "execStoppedReason":"clientShutdown"
+}

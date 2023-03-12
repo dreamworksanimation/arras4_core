@@ -1,0 +1,32 @@
+Client overrides are environment variables that modify client behavior for debugging purposes.
+
+ARRASCLIENT_OVR_COORDINATOR_URL : overrides the coordinator url
+	Example: "http://localhost:8087/coordinator/1"
+
+ARRASCLIENT_OVR_READY_WAIT_SECS : overrides time in waitForEngineReady. 
+	Must be an integer >= 0. Passing 0 is valid, but will almost always cause the client to timeout
+	waiting for ready.
+
+ARRASCLIENT_OVR_DISCONNECT_WAIT_SECS : overrides time in waitForDisconnect.
+        must be an integer >= 0.
+
+ARRASCLIENT_OVR_SESSION_DEF_SUFFIX : adds a suffix to every session definition name
+	Example: ".trace" causes "mysession.trace.sessiondef" to be loaded in place of 
+	"mysession.sessiondef". Falls back to the original definition if the suffixed name isn't found.
+	An alternative way to change the sessiondef files that are loaded is to change the
+	environment variable ARRAS_SESSION_PATH to point to a different directory.
+
+ARRASCLIENT_OVR_CLIENT_LOG_LEVEL 
+ARRASCLIENT_OVR_CLIENT_TRACE_LEVEL :
+        Set the log and trace thresholds (resp.) for the client. Must be integers >= 0
+	Note these only set the threshold on the client-side logger : they won't alter the log or trace
+	levels used by computations. To do this, if it isn't supported by the client app directly, 
+	you need to modify the session definition -- by changing ARRAS_SESSION_PATH or setting 
+	ARRASCLIENT_OVR_SESSION_DEF_SUFFIX
+
+ARRASCLIENT_OVR_FORCE_LOCAL_MODE :
+	If set to "1" or "true", then the client will use local mode for any session containing just a client
+	and one computation. Local mode launches the computation locally in execComp without going through
+	Coordinator or Node. Normally local mode is enabled by specifying "local" for the datacenter in 
+	getArrasUrl() or by passing "arras:local" as the "URL" to createSession. The environment variable
+	overrides this behavior to use local mode whenever possible.

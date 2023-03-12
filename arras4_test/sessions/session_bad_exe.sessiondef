@@ -1,0 +1,24 @@
+{
+    "name": "session_bad_exe",
+    "description": "this session def causes the arras 3 executor to not be found",
+    "computations": {
+        "(client)": {
+            "messages": {
+                "bad_guy": "*"
+            }
+        }, 
+        "bad_guy": {
+            "dso": "libmichael_moorcock.so", 
+            "entry": "yes", 
+            "requirements": {
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 16384
+                }
+            },
+            "messages": {
+                "(client)": "*" 
+            }
+        }
+    }
+}

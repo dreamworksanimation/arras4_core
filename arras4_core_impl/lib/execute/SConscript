@@ -1,0 +1,40 @@
+Import('env')
+from os import path
+
+# --------------------------------------------------------------------------
+name       = 'execute'
+sources    = env.DWAGlob('*.cc')
+incdir     = [str(env.Dir('..').srcnode())]
+components = [
+    'arras4_log',
+    'message_api',
+    'jsoncpp'
+]
+# --------------------------------------------------------------------------
+
+publicHeaders = [
+    'ControlGroup.h',
+    'Environment.h',
+    'IoCapture.h',
+    'MemoryTracking.h',
+    'Process.h',
+    'process_utils.h',
+    'ProcessController.h',
+    'ProcessManager.h',
+    'RezContext.h',
+    'ShellContext.h',
+    'SpawnArgs.h'
+]
+
+env.DWAInstallInclude(publicHeaders, 'execute')
+
+env.AppendUnique(LIBS = ['cgroup'])
+
+env.DWAUseComponents(components)
+lib = env.DWASharedLibrary(name, sources)
+target = env.DWAInstallLib(lib)
+env.DWAComponent(name, LIBS=target, CPPPATH=incdir, COMPONENTS=components)
+env.DWAInstallSConscriptStub(
+    name, LIBS=target, CPPPATH=[env.Dir('$INSTALL_DIR/include')],
+    COMPONENTS=components)
+env.DWALinkValidate(name)

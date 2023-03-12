@@ -1,0 +1,26 @@
+{
+    "name": "session_dso_not_v4x",
+    "description": "this session def tries to use an arras 3 dso with arras 4 api",
+    "computations": {
+        "(client)": {
+            "messages": {
+                "bad_guy": "*"
+            }
+        }, 
+        "bad_guy": {
+            "dso": "libmcrt.so", 
+            "entry": "yes", 
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "moonray",
+                "resources": {
+                    "cores": 8.0,
+                    "memoryMB": 16384
+                }
+            },
+            "messages": {
+                "(client)": "*" 
+            }
+        }
+    }
+}

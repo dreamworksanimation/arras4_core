@@ -1,0 +1,45 @@
+{
+    "name": "segfault_in_configure",
+    "description": "generates a segfault in the computation configure function",
+    "computations": {
+        "(client)": {
+            "messages": {
+                "testcomp": "*"
+            }
+        }, 
+        "testcomp": {
+            "dso": "libarras4_testcomputation.so", 
+            "entry": "yes", 
+            "forward":true,
+            "errorInStart":"segfault",
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "minCores": 1.0,
+                    "maxCores": "*",
+                    "memoryMB": 16384
+                }
+            },
+            "messages": {
+                "(client)": "*" 
+            }
+        },
+        "second": {
+            "dso": "libarras4_testcomputation.so", 
+            "forward":true,
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "minCores": 1.0,
+                    "maxCores": "*",
+                    "memoryMB": 16384
+                }
+            },
+            "messages": {
+                "(client)": "*" 
+            }
+        }
+    }
+}

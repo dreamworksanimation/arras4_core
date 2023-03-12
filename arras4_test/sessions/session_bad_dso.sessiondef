@@ -1,0 +1,26 @@
+{
+    "name": "session_bad_dso",
+    "description": "this session def contains a dso name that won't be found",
+    "computations": {
+        "(client)": {
+            "messages": {
+                "bad_guy": "*"
+            }
+        }, 
+        "testcomp": {
+            "dso": "libmichael_moorcock.so", 
+            "entry": "yes", 
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 16384
+                }
+            },
+            "messages": {
+                "(client)": "*" 
+            }
+        }
+    }
+}

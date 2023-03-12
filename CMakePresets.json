@@ -1,0 +1,71 @@
+{
+    "version": 4,
+    "configurePresets": [
+        {
+            "name": "rez-environment",
+            "hidden": true,
+            "environment": {
+                "CPPUNIT_ROOT"              : "$env{REZ_CPPUNIT_ROOT}",
+                "JSONCPP_ROOT"              : "$env{REZ_JSONCPP_ROOT}",
+                "LIBCURL_ROOT"              : "$env{REZ_CURL_NO_LDAP_ROOT}",
+                "DWA_PREFIX_BOOST"          : "$env{REZ_BOOST_ROOT}",
+                "DWA_PREFIX_MICROHTTP"      : "$env{REZ_LIBMICROHTTPD_ROOT}"
+            },
+            "cacheVariables": {
+                "CMAKE_PREFIX_PATH": "$env{DWA_PREFIX_BOOST};$env{DWA_PREFIX_MICROHTTP}",
+                "CMAKE_MODULE_PATH": "$env{CMAKE_MODULE_PATH}"
+            }
+        },
+        {
+            "name": "dwa-debug",
+            "displayName": "DWA Debug",
+            "inherits": "rez-environment",
+            "binaryDir": "${sourceParentDir}/build-debug/${sourceDirName}",
+            "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" },
+            "generator": "Unix Makefiles"
+        },
+        {
+            "name": "dwa-release",
+            "displayName": "DWA Release",
+            "inherits": "rez-environment",
+            "binaryDir": "${sourceParentDir}/build-release/${sourceDirName}",
+            "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" },
+            "generator": "Unix Makefiles"
+        },
+        {
+            "name": "dwa-relwithdebinfo",
+            "displayName": "DWA RelWithDebInfo",
+            "inherits": "rez-environment",
+            "binaryDir": "${sourceParentDir}/build-relwithdebinfo/${sourceDirName}",
+            "cacheVariables": { "CMAKE_BUILD_TYPE": "RelWithDebInfo" },
+            "generator": "Unix Makefiles"
+        },
+        {
+            "name": "dwa-debug-unit",
+            "inherits": "dwa-debug",
+            "cacheVariables": { "SCENERDL2_BUILD_UNITTESTS": "YES" }
+        },
+        {
+            "name": "dwa-release-unit",
+            "inherits": "dwa-release",
+            "cacheVariables": { "SCENERDL2_BUILD_UNITTESTS": "YES" }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "dwa-debug",
+            "displayName": "DWA Debug",
+            "configurePreset": "dwa-debug"
+        },
+        {
+            "name": "dwa-release",
+            "displayName": "DWA Release",
+            "configurePreset": "dwa-release"
+        },
+        {
+            "name": "dwa-relwithdebinfo",
+            "displayName": "DWA RelWithDebInfo",
+            "configurePreset": "dwa-relwithdebinfo"
+        }
+    ]
+}

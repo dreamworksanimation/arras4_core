@@ -1,0 +1,28 @@
+Import('env')
+from os import path
+
+# --------------------------------------------------------------------------
+name       = 'standalone'
+sources    = env.DWAGlob('*.cc')
+incdir     = [str(env.Dir('..').srcnode())]
+components = [
+    'message_api',
+    'computation_api',
+    'jsoncpp'
+]
+# --------------------------------------------------------------------------
+
+publicHeaders = [
+    'StandaloneMetadata.h',
+    'StandaloneEnvironment.h',
+]
+env.DWAInstallInclude(publicHeaders, 'standalone')
+
+env.DWAUseComponents(components)
+lib = env.DWASharedLibrary(name, sources)
+target = env.DWAInstallLib(lib)
+env.DWAComponent(name, LIBS=target, CPPPATH=incdir, COMPONENTS=components)
+env.DWAInstallSConscriptStub(
+    name, LIBS=target, CPPPATH=[env.Dir('$INSTALL_DIR/include')],
+    COMPONENTS=components)
+env.DWALinkValidate(name)

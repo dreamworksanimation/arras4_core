@@ -1,0 +1,15 @@
+{
+  "clientDisconnectReason": "kicked",
+  "clientStatus": "connected",
+  "computations": [
+    {
+      "compStatus": "",
+      "execStatus": "stopped",
+      "name": "testcomp",
+      "signal": "not set",
+      "stoppedReason": "terminated because it failed to load the computation dso"
+    }
+  ],
+  "execStatus": "stopped",
+  "execStoppedReason": "compExited testcomp terminated because it failed to load the computation dso",
+}

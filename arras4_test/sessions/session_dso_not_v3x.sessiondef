@@ -1,0 +1,25 @@
+{
+    "name": "session_dso_not_v3x",
+    "description": "this session def tries to use an arras 4 dso with arras 3 api",
+    "computations": {
+        "(client)": {
+            "messages": {
+                "bad_guy": "*"
+            }
+        }, 
+        "bad_guy": {
+            "dso": "libarras4_testcomputation.so", 
+            "entry": "yes", 
+            "requirements": {
+                "rez_packages": "arras_computation_api-3 arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 16384
+                }
+            },
+            "messages": {
+                "(client)": "*" 
+            }
+        }
+    }
+}

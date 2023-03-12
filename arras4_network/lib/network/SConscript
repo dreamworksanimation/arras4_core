@@ -1,0 +1,46 @@
+Import('env')
+from os import path
+
+# --------------------------------------------------------------------------
+name       = 'arras4_network'
+sources    = env.DWAGlob('*.cc')
+incdir     = [str(env.Dir('..').srcnode())]
+components = [
+    ]
+
+# --------------------------------------------------------------------------
+
+publicHeaders = [
+    'BasicFramingSink.h',  
+    'BasicFramingSource.h',
+    'BufferedSink.h',	
+    'BufferedSource.h',
+    'Buffer.h',
+    'DataSink.h',
+    'DataSource.h',	
+    'Encryption.h',   
+    'FileDataSource.h',
+    'FileError.h',
+    'Frame.h',
+    'FramingError.h',
+    'InetSocketPeer.h',
+    'InvalidParameterError.h',  
+    'IPCSocketPeer.h',
+    'MultiBuffer.h',
+    'network_types.h', 
+    'OutOfMemoryError.h', 
+    'PeerException.h',
+    'Peer.h',  
+    'platform.h',  
+    'SocketPeer.h',
+]
+env.DWAInstallInclude(publicHeaders, 'network')
+
+env.DWAUseComponents(components)
+lib = env.DWASharedLibrary(name, sources)
+target = env.DWAInstallLib(lib)
+env.DWAComponent(name, LIBS=target, CPPPATH=incdir, COMPONENTS=components)
+env.DWAInstallSConscriptStub(
+    name, LIBS=target, CPPPATH=[env.Dir('$INSTALL_DIR/include')],
+    COMPONENTS=components)
+env.DWALinkValidate(name)

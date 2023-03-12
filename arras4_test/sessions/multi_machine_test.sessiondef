@@ -1,0 +1,29 @@
+{
+    "name": "multi_machine_test",
+    "description": "multiple test computations running on different machines",
+    "computations": {
+        "(client)": {
+            "messages": {
+                "testcomp": "*"
+            }
+        }, 
+        "testcomp": {
+            "arrayExpand":3,
+            "dso": "libarras4_testcomputation.so", 
+            "entry": "yes", 
+            "forward":true,
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "minCores": 1,
+                    "maxCores": "*",
+                    "memoryMB": 16384
+                }
+            },
+            "messages": {
+                "(client)": "*" 
+            }
+        }
+    }
+}

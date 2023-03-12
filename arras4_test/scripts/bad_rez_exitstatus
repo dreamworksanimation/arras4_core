@@ -1,0 +1,16 @@
+{
+  "clientDisconnectReason": "kicked",
+  "clientStatus": "connected",
+  "computations": [
+    {
+      "compStatus": "",
+      "execStatus": "stopped",
+      "name": "testcomp",
+      "signal": "not set",
+      "stoppedReason": "rez context error for testcomp: Failed to generate rez context from: (moonray-4 moonray-3),   The following conflicts occurred:\n('moonray', '3') <--!--> ('moonray', '4')\n"
+    }
+  ],
+  "execStatus": "stopped",
+  "execStoppedReason": "rez context error for testcomp: Failed to generate rez context from: (moonray-4 moonray-3),   The following conflicts occurred:",
+}
+

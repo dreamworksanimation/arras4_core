@@ -1,0 +1,14 @@
+{
+  "clientDisconnectReason": "kicked",
+  "clientStatus": "connected",
+  "computations": [
+    {
+      "compStatus": "",
+      "execStatus": "stopped",
+      "signal": "not set",
+      "stoppedReason": "terminated unexpectedly"
+    }
+  ],
+  "execStatus": "stopped",
+  "execStoppedReason": "compExited testcomp terminated unexpectedly",
+}

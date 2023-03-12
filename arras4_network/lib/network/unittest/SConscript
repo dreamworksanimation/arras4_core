@@ -1,0 +1,11 @@
+Import('env')
+# --------------------------------------------------------------------
+name       = 'arras4_network'
+sources    = ['main.cc']
+ref        = []
+components = [
+    'arras4_network',
+]
+
+sources += env.DWAGlob('Test*.cc')
+test = env.DWAPdevUnitTest(name, sources, ref, COMPONENTS=components, TIMEOUT=600)

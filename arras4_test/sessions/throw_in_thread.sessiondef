@@ -1,0 +1,29 @@
+{
+    "name": "throw_in_thread",
+    "description": "throws an exception in the computation workerThread function",
+    "computations": {
+        "(client)": {
+            "messages": {
+                "testcomp": "*"
+            }
+        }, 
+        "testcomp": {
+            "dso": "libarras4_testcomputation.so", 
+            "entry": "yes", 
+            "forward":true,
+            "errorInThread":"throw",
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "pseudo-compiler": "iccHoudini165_64",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 16384
+                }
+            },
+            "messages": {
+                "(client)": "*" 
+            }
+        }
+    }
+}

@@ -1,0 +1,40 @@
+Import('env')
+from os import path
+
+# --------------------------------------------------------------------------
+name       = 'message_api'
+sources    = env.DWAGlob('*.cc')
+incdir     = [str(env.Dir('..').srcnode())]
+components = [
+    'jsoncpp',
+    'uuid'
+]
+# --------------------------------------------------------------------------
+
+publicHeaders = [
+    'Address.h',
+    'ArrasTime.h',
+    'ContentMacros.h',
+    'ContentRegistry.h',
+    'DataInStream.h',
+    'DataOutStream.h',
+    'MessageContent.h',
+    'MessageFormatError.h',    
+    'Message.h',
+    'Metadata.h',
+    'Object.h',
+    'ObjectContent.h',
+    'messageapi_names.h',  
+    'messageapi_types.h',
+    'UUID.h'
+]
+env.DWAInstallInclude(publicHeaders, 'message_api')
+
+env.DWAUseComponents(components)
+lib = env.DWASharedLibrary(name, sources)
+target = env.DWAInstallLib(lib)
+env.DWAComponent(name, LIBS=target, CPPPATH=incdir, COMPONENTS=components)
+env.DWAInstallSConscriptStub(
+    name, LIBS=target, CPPPATH=[env.Dir('$INSTALL_DIR/include')],
+    COMPONENTS=components)
+env.DWALinkValidate(name)

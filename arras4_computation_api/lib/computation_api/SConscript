@@ -1,0 +1,29 @@
+Import('env')
+from os import path
+
+# --------------------------------------------------------------------------
+name       = 'computation_api'
+sources    = env.DWAGlob('*.cc')
+incdir     = [str(env.Dir('..').srcnode())]
+components = [
+    'message_api',
+    'jsoncpp'
+]
+# --------------------------------------------------------------------------
+
+publicHeaders = [
+    'Computation.h',
+    'ComputationEnvironment.h',
+    'standard_names.h',
+    'version.h'
+]
+env.DWAInstallInclude(publicHeaders, 'computation_api')
+
+env.DWAUseComponents(components)
+lib = env.DWASharedLibrary(name, sources)
+target = env.DWAInstallLib(lib)
+env.DWAComponent(name, LIBS=target, CPPPATH=incdir, COMPONENTS=components)
+env.DWAInstallSConscriptStub(
+    name, LIBS=target, CPPPATH=[env.Dir('$INSTALL_DIR/include')],
+    COMPONENTS=components)
+env.DWALinkValidate(name)

@@ -1,0 +1,14 @@
+{
+  "clientDisconnectReason": "kicked",
+  "clientStatus": "connected",
+  "computations": [
+    {
+      "compStatus": "",
+      "execStatus": "stopped",
+      "signal": "not set",
+      "stoppedReason": "terminated with exit code 10"
+    }
+  ],
+  "execStatus": "stopped",
+  "execStoppedReason": "compExited testcomp terminated with exit code 10",
+}

@@ -1,0 +1,44 @@
+{
+    "name": "benchmark_test",
+    "description": "computation echos messages back to client",
+    "computations": {
+        "(client)": {
+            "messages": {
+                "benchcomp0": "For_client",
+                "benchcomp1": "For_client"
+            }
+        }, 
+        "benchcomp0": {
+            "dso": "libarras4_benchmark_computation.so", 
+            "entry": "yes", 
+            "sleepInOnStop": 100000,
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 16384
+                }
+            },
+            "messages": {
+                "(client)": "For_benchcomp0", 
+                "benchcomp1": "For_benchcomp0" 
+            }
+        },
+        "benchcomp1": {
+            "dso": "libarras4_benchmark_computation.so", 
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 16384
+                }
+            },
+            "messages": {
+                "(client)": "For_benchcomp1",
+                "benchcomp0": "For_benchcomp1" 
+            }
+        }
+    }
+}

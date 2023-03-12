@@ -1,0 +1,32 @@
+Import('env')
+import os
+# --------------------------------------------------------------------
+name       = 'arras4_client_sdk'
+ref        = []
+sources    = ['main.cc']
+components = [
+    'arras4_log',
+    'arras4_network',
+    'arras4_http',
+    'sdk',
+    'client_api',
+    'message_api',
+    'jsoncpp',
+]
+
+sources += env.DWAGlob('Test*.cc')
+
+include_paths = [env.Dir('..').srcnode(), '${INSTALL_DIR}/include']
+env.Prepend(CPPPATH=include_paths)
+
+## enable real post test 
+if "ENABLE_GET_FARM_HOSTS_TEST" in os.environ:
+    print "ENABLE_GET_FARM_HOSTS_TEST"
+    env['CXXFLAGS'].append('-DENABLE_GET_FARM_HOSTS_TEST=1')
+else:
+    print "NO ENABLE_POST_TEST"
+
+env['RUN_TEST_ENV']['LD_LIBRARY_PATH'] = \
+    os.path.pathsep.join([Dir(env.subst('${INSTALL_DIR}/lib/')).abspath])
+
+test = env.DWAPdevUnitTest(name, sources, ref, COMPONENTS=components)

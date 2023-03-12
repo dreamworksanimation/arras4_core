@@ -1,0 +1,43 @@
+Import('env')
+from os import path
+# extract library name from current/parent path
+modname = path.basename(path.abspath('..'))
+libname = path.basename(path.abspath('.'))
+# --------------------------------------------------------------------------
+name       = modname+'_'+libname
+sources    = env.DWAGlob('*.cc')
+incdir     = [str(env.Dir('../..').srcnode())]
+components =  [
+	       'client_local',
+               'arras4_network',
+               'arras4_http',
+               'arras4_log',
+               'message_api',
+               'core_messages',
+               'message_impl',
+               'shared_impl',
+               'chunking',
+               'jsoncpp',
+	       'boost_filesystem_mt'
+              ]
+
+publicHeaders = [
+	      'AcapAPI.h', 
+	      'Client.h', 
+	      'ClientException.h', 
+	      'SessionDefinition.h',
+    	      'ProgressSender.h'
+]
+
+# --------------------------------------------------------------------------
+()
+env.DWAUseComponents(components)
+env.Append(CPPPATH=incdir)
+lib = env.DWASharedLibrary(name, sources)
+target = env.DWAInstallLib(lib)
+env.DWAInstallInclude(publicHeaders, 'client/api')
+env.DWAComponent(name, LIBS=target, CPPPATH=incdir, COMPONENTS=components)
+env.DWAInstallSConscriptStub(
+    name, LIBS=target, CPPPATH=[env.Dir('$INSTALL_DIR/include')],
+    COMPONENTS=components)
+env.DWALinkValidate(name)

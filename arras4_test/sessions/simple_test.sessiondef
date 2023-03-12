@@ -1,0 +1,28 @@
+{
+    "name": "simple_test",
+    "description": "computation echos messages back to client",
+    "computations": {
+        "(client)": {
+            "messages": {
+                "testcomp": "*"
+            }
+        }, 
+        "testcomp": {
+            "dso": "libarras4_testcomputation.so", 
+            "entry": "yes", 
+            "forward":true,
+            "requirements": {
+                "computationAPI": "4.x",
+                "pseudo-compiler": "iccHoudini165_64",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 16384
+                }
+            },
+            "messages": {
+                "(client)": "*" 
+            }
+        }
+    }
+}

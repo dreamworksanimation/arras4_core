@@ -1,0 +1,252 @@
+#!/bin/bash
+# Copyright 2023 DreamWorks Animation LLC and Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+
+testname()
+{
+    nameoftest=$1
+    echo "****** $nameoftest"
+    echo "*********************************************" &>> $OUTPUTFILE
+    echo "****** $nameoftest" &>> $OUTPUTFILE
+    echo "*********************************************" &>> $OUTPUTFILE
+}
+
+checkresult()
+{
+    saveerror=$?
+    if [ $saveerror != 0 ]; then
+        echo "TEST FAILED: (exit status $saveerror) $nameoftest"
+        exit $saveerror
+    else
+        echo "****** Ran successfully"
+    fi
+}
+
+#
+# These tests require a client library which the special test harness
+# which allows obscure failures when estabilishing connections
+#
+special_client()
+{
+
+testname "Test messaging API version mismatch from TCP connection"
+echo "arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=1 --expect-disconnect --expect-connect-error $GETLOGS" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=1 --expect-disconnect --expect-connect-error $GETLOGS &>> $OUTPUTFILE
+checkresult
+
+testname "Test connection with unknown session id"
+echo "arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=2 --expect-disconnect --expect-connect-error $GETLOGS" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=2 --expect-disconnect --expect-connect-error $GETLOGS &>> $OUTPUTFILE
+checkresult
+
+testname "Test timeeout with sending no connection data"
+echo "arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=3 --expect-disconnect --expect-connect-error $GETLOGS" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=3 --expect-disconnect --expect-connect-error $GETLOGS &>> $OUTPUTFILE
+checkresult
+
+testname "Test timeout with sending sending only partial magic number"
+echo "arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=4 --expect-disconnect --expect-connect-error $GETLOGS" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=4 --expect-disconnect --expect-connect-error $GETLOGS &>> $OUTPUTFILE
+checkresult
+
+testname "Test sending bad magic number"
+echo "arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=5 --expect-disconnect --expect-connect-error $GETLOGS" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=5 --expect-disconnect --expect-connect-error $GETLOGS &>> $OUTPUTFILE
+checkresult
+
+testname "Test timeout with sending magic number and version only"
+echo "arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=6 --expect-disconnect --expect-connect-error $GETLOGS" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=6 --expect-disconnect --expect-connect-error $GETLOGS &>> $OUTPUTFILE
+checkresult
+
+testname "Test timeout with sending magic number, version, and a little more"
+echo "arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=7 --expect-disconnect --expect-connect-error $GETLOGS" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=7 --expect-disconnect --expect-connect-error $GETLOGS &>> $OUTPUTFILE
+checkresult
+
+testname "Test sending bad connection type"
+echo "arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=8 --expect-disconnect --expect-connect-error $GETLOGS" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=8 --expect-disconnect --expect-connect-error $GETLOGS &>> $OUTPUTFILE
+checkresult
+
+testname "Test simple client timeout"
+echo "arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=9 --expect-disconnect --expect-connect-error $GETLOGS" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=9 --expect-disconnect --expect-connect-error $GETLOGS &>> $OUTPUTFILE
+checkresult
+
+testname "Test closing the connection without sending registration"
+echo "arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=10 --expect-connect-error --expect-connect-error $GETLOGS" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=10 --expect-disconnect --expect-connect-error $GETLOGS &>> $OUTPUTFILE
+checkresult
+
+testname "Test closing the connection afer sending partial magic"
+echo "arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=11 --expect-connect-error --expect-connect-error $GETLOGS" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=11 --expect-disconnect --expect-connect-error $GETLOGS &>> $OUTPUTFILE
+checkresult
+
+testname "Test closing the connection after sending magic and version but no more"
+echo "arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=12 --expect-connect-error --expect-connect-error $GETLOGS" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=12 --expect-disconnect --expect-connect-error $GETLOGS &>> $OUTPUTFILE
+checkresult
+
+testname "Test closing the connection after sending magic, version, and a little more"
+echo "arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=13 --expect-connect-error --expect-connect-error $GETLOGS" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=13 --expect-disconnect --expect-connect-error $GETLOGS &>> $OUTPUTFILE
+checkresult
+
+testname "Test try to connect the client twice"
+echo "arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=15 --expect-connect-error --expect-connect-error $GETLOGS" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} ${PREPEND_OPTION} --session=low_memory_test --negotiate-error=13 --expect-disconnect --expect-connect-error $GETLOGS &>> $OUTPUTFILE
+checkresult
+
+
+
+}
+
+GETLOGS=--get-logs
+
+OUTPUTFILE=$2
+TEST_ENV=$1
+if [[ $OUTPUTFILE == "" ]]; then
+    OUTPUTFILE="arras4testcases.output"
+fi
+echo "Sending test output to" $OUTPUTFILE
+if [[ $TEST_ENV == "" ]]; then
+    echo "Usage: arras4test_tests {env} [{outputfile}] [{prepend}]"
+    echo "    where {env} can be one of uns, stb, stb2, qa, or local"
+    echo "                local will use http://localhost:8087/ for coordinator"
+    echo "          {outputfile} is a file to put the test outputs and session logs (defauls to arras4test_tests.output)"
+    echo "          {prepend} is a rez path to prepend"
+    exit
+else
+    echo "Using environment $1"
+    echo "Using environment $1" &>> $OUTPUTFILE
+fi
+
+LOCAL_REZ_PATH=$3
+if [[ $LOCAL_REZ_PATH == "" ]]; then
+    echo "Not using a prepend"
+    echo "Not using a prepend" &>> $OUTPUTFILE
+else
+    PREPEND_OPTION="--prepend=${LOCAL_REZ_PATH}"
+    echo "Using prepend" ${LOCAL_REZ_PATH}
+    echo "Using prepend" ${LOCAL_REZ_PATH}
+fi
+echo "Running with REZ_PACKAGES_PATH =" $REZ_PACKAGES_PATH
+echo "Running with REZ_PACKAGES_PATH =" $REZ_PACKAGES_PATH &>> $OUTPUTFILE
+
+#arras4benchmark --env=${TEST_ENV} --duration=0 --stay-connected=0 --sessions=6 --repeat=20 --requestMb=2048 --cores=1 --prepend=${LOCAL_REZ_PATH}
+
+date > $OUTPUTFILE
+
+#SLOW_CONNECTION="--negotiate-error=14"
+
+testname "Test basic client connect and disconnect"
+echo "arras4test --env=${TEST_ENV} ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} " &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} &>> $OUTPUTFILE
+checkresult
+
+testname "Test segmentation fault in computation configure()"
+echo "arras4test --env=${TEST_ENV} --session=segfault_in_configure --expect-disconnect --expect-connect-error ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} " &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} --session=segfault_in_configure --expect-disconnect --expect-connect-error ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} &>> $OUTPUTFILE
+checkresult
+
+testname "Test segmentation fault in computation onMessage()"
+echo "arras4test --env=${TEST_ENV} --session=segfault_in_onmessage --expect-disconnect ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} " &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} --session=segfault_in_onmessage --expect-disconnect ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} &>> $OUTPUTFILE
+checkresult
+
+testname "Test SIGTERM in computation onMessage()"
+echo "arras4test --env=${TEST_ENV} --session=sigterm_in_onmessage --expect-disconnect ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} "  &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} --session=sigterm_in_onmessage --expect-disconnect ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION}  &>> $OUTPUTFILE
+checkresult
+
+testname "Test SIGKILL in computation onMessage()"
+echo "arras4test --env=${TEST_ENV} --session=sigkill_in_onmessage --expect-disconnect ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION}" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} --session=sigkill_in_onmessage --expect-disconnect ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION}&>> $OUTPUTFILE
+checkresult
+
+testname "Test abort() in computation onMessage()"
+echo "arras4test --env=${TEST_ENV} --session=abort_in_onmessage --expect-disconnect ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION}"  &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} --session=abort_in_onmessage --expect-disconnect ${PREPEND_OPTION} ${GETLOGS}  ${SLOW_CONNECTION} &>> $OUTPUTFILE
+checkresult
+
+testname "Test computation hang and ignore sigterm (force kill)"
+echo "arras4test --env=${TEST_ENV} --session=hang_and_ignore_sigterm ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION}" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} --session=hang_and_ignore_sigterm ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} &>> $OUTPUTFILE
+checkresult
+
+testname "Test return Result::Invalid from computations onMessage() function"
+echo "arras4test --env=${TEST_ENV} --session=invalid_in_onmessage ${PREPEND_OPTION} ${GETLOGS}  ${SLOW_CONNECTION} --expected-status=invalid_in_onmessage_exitstatus --expect-disconnect" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} --session=invalid_in_onmessage ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=invalid_in_onmessage_exitstatus --expect-disconnect &>> $OUTPUTFILE
+checkresult
+
+testname "Test returning Result::Invalid from computations configure() function"
+echo "arras4test --env=${TEST_ENV} --session=invalid_in_configure ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=invalid_in_configure_exitstatus --expect-disconnect --expect-connect-error" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} --session=invalid_in_configure ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=invalid_in_configure_exitstatus --expect-disconnect --expect-connect-error &>> $OUTPUTFILE
+checkresult
+
+testname "Test exit(0) in in computations onMessage() function"
+echo "arras4test --env=${TEST_ENV} --session=exit_in_onmessage ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=exit_in_onmessage_exitstatus --expect-disconnect" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} --session=exit_in_onmessage ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=exit_in_onmessage_exitstatus --expect-disconnect &>> $OUTPUTFILE
+checkresult
+
+testname "Test exit(10) in in computations onMessage() function"
+echo "arras4test --env=${TEST_ENV} --session=exit10_in_onmessage ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=exit10_in_onmessage_exitstatus --expect-disconnect" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} --session=exit10_in_onmessage ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=exit10_in_onmessage_exitstatus --expect-disconnect &>> $OUTPUTFILE
+checkresult
+
+testname "Test hang computations onMessage() function (needs SIGTERM)"
+echo "arras4test --env=${TEST_ENV} --session=hang_in_onmessage ${PREPEND_OPTION} ${GETLOGS} --expected-status=normal_exitstatus" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} --session=hang_in_onmessage ${PREPEND_OPTION} ${GETLOGS} --expected-status=normal_exitstatus &>> $OUTPUTFILE
+checkresult
+
+testname "Test throw in computation configure"
+echo "arras4test --env=${TEST_ENV} --session=throw_in_configure ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=throw_in_configure_exitstatus --expect-disconnect --expect-connect-error" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} --session=throw_in_configure ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=throw_in_configure_exitstatus --expect-disconnect --expect-connect-error &>> $OUTPUTFILE
+checkresult
+
+testname "Test throw in computation onMessage"
+echo "arras4test --env=${TEST_ENV} --session=throw_in_onmessage  ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=throw_in_configure_exitstatus -expect-disconnect" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} --session=throw_in_onmessage ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=throw_in_configure_exitstatus --expect-disconnect &>> $OUTPUTFILE
+checkresult
+
+testname "Test giving 3.x computation but saying it's 4.x"
+echo "arras4test --env=${TEST_ENV} --session=session_dso_not_v3x  ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=dso_not_v3x_exitstatus --expect-disconnect --expect-connect-error" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} --session=session_dso_not_v3x  ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=dso_not_v3x_exitstatus --expect-disconnect --expect-connect-error&>> $OUTPUTFILE
+checkresult
+
+testname "Test giving 4.x computation but saying it's 3.x"
+echo "arras4test --env=${TEST_ENV} --session=session_dso_not_v4x  ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=dso_not_v4x_exitstatus --expect-disconnect --expect-connect-error" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} --session=session_dso_not_v4x  ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=dso_not_v4x_exitstatus --expect-disconnect --expect-connect-error &>> $OUTPUTFILE
+checkresult
+
+testname "Test giving bad computation dso"
+echo "arras4test --env=${TEST_ENV} --session=session_bad_dso  ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=bad_dso_exitstatus --expect-disconnect --expect-connect-error" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} --session=session_bad_dso ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=bad_dso_exitstatus --expect-disconnect --expect-connect-error &>> $OUTPUTFILE
+checkresult
+
+testname "Test giving bad computation dso along with good"
+echo "arras4test --env=${TEST_ENV} --session=session_bad_dso_large  ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=bad_dso_large_exitstatus --expect-connect-error --expect-disconnect" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} --session=session_bad_dso_large ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=bad_dso_large_exitstatus --expect-connect-error --expect-disconnect &>> $OUTPUTFILE
+checkresult
+
+
+testname "Test giving bad computation executor"
+echo "arras4test --env=${TEST_ENV} --session=session_bad_exe  ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=bad_exe_exitstatus --expect-disconnect --expect-connect-error" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} --session=session_bad_exe ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=bad_exe_exitstatus --expect-disconnect --expect-connect-error &>> $OUTPUTFILE
+checkresult
+
+testname "Test giving bad computation rez"
+echo "arras4test --env=${TEST_ENV} --session=session_bad_rez  ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=bad_rez_exitstatus --expect-disconnect --expect-connect-error" &>> $OUTPUTFILE
+arras4test --env=${TEST_ENV} --session=session_bad_rez ${PREPEND_OPTION} ${GETLOGS} ${SLOW_CONNECTION} --expected-status=bad_rez_exitstatus --expect-disconnect --expect-connect-error &>> $OUTPUTFILE
+checkresult
+
+# this can be enable when the special client library is being used
+#special_client
+
+testname "Run rez2 computation with rez1 node"
+arras4benchmark --packaging-system=rez2 --printEnv --prepend=/usr/pic1/prramsey/rez2 --stay-connected=0 --duration=0 |& grep ARRAS4_COMPUTATION_API &>> $OUTPUTFILE
+
+testname "Run rez2 computation with rez1 node"
+arras4benchmark --printEnv --prepend=/usr/pic1/prramsey/rez --stay-connected=0 --duration=0 |& grep ARRAS4_COMPUTATION_API &>> $OUTPUTFILE

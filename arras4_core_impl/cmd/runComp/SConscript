@@ -1,0 +1,34 @@
+Import('env')
+
+import os
+# ------------------------------------------
+name       = 'runComp'
+sources    = env.DWAGlob('*.cc')
+components =    [
+            'arras4_network',
+            'message_api',
+            'computation_api',
+            'message_impl',
+            'computation_impl',
+            'shared_impl',
+            'routing',
+            'arras4_exceptions'
+         ]
+# ------------------------------------------
+
+if "icc" in env['COMPILER_LABEL']:
+    env['CXXFLAGS'].append('-wd1782') # #pragma once is not deprecated.
+
+()
+env.DWAUseComponents(components)
+
+env.AppendUnique(LIBS = ['rt'])
+if "icc" in env['COMPILER_LABEL']:
+    # Force linking against OpenMP to pull link of static thread locals into process launch
+    env.AppendUnique(LIBS = ['iomp5'])
+else:
+    env.AppendUnique(LIBS = ['dl'])
+    
+binName = name 
+prog = env.DWAProgram(binName, sources)
+env.DWAInstallBin(prog)

@@ -1,0 +1,26 @@
+Import('env')
+import os
+
+# --------------------------------------------------------------------
+name       = 'arras4_log_client'
+
+sources    = ['main.cc']
+sources += env.DWAGlob('Test*.cc')
+
+include_paths = [env.Dir('..').srcnode(), '${INSTALL_DIR}/include']
+env.Prepend(CPPPATH=include_paths)
+
+ref        = []
+
+components = [
+    'arras4_log',
+    'arras4_network',
+    'arras4_http',
+    'log_client'
+]
+
+
+env['RUN_TEST_ENV']['LD_LIBRARY_PATH'] = \
+    os.path.pathsep.join([Dir(env.subst('${BUILD_DIR}/lib/log_client/')).abspath])
+
+test = env.DWAPdevUnitTest(name, sources, ref, COMPONENTS=components)

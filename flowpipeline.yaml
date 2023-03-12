@@ -1,0 +1,16 @@
+# -*- coding: utf-8 -*-
+syntax: 1
+
+pipeline-configurations:
+
+  continuous-integration:
+    build:
+      rez_args: -b scons
+
+  pre-release:
+    build:
+      rez_args: -b scons
+
+  release:
+    build:
+      rez_args: -b cmake

@@ -1,0 +1,27 @@
+Import('env')
+from os.path import join
+
+
+name = 'arras4monitor'
+sources = env.DWAGlob('*.cc')
+
+# expose the current directory as the include path
+include_paths = ['${INSTALL_DIR}/include']
+
+# Components needed to build/use this library.
+components = [
+    # Arras deps
+    'arras4_http',
+    'arras4_log',
+
+    # Third party 
+    'jsoncpp',
+    'boost_headers',
+    'boost_program_options_mt'
+]
+
+env.DWAUseComponents(components)
+env.AppendUnique(CPPPATH = [env.Dir('.').srcnode()],)
+
+prog = env.DWAProgram(name, sources)
+env.DWAInstallBin(prog)

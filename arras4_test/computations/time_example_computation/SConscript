@@ -1,0 +1,30 @@
+Import('env')
+from os import path
+# ------------------------------------------
+name       = 'time_example_computation'
+libname    = 'time_example_computation'
+sources    = env.DWAGlob('*.cc')
+incdir     = [str(env.Dir('.').srcnode())]
+components =    [
+                    # needed for the ARRAS_DEBUG, ARRAS_INFO, and ARRAS_ERROR macros
+                    # and the log functions those involk
+                    'arras4_log',
+                    'boost_iostreams_mt',
+                    'time_example_message',
+
+                    # needed for the base Computation class which the computation derives from
+                    # and some related helper macros
+                    'computation_api',
+
+                    # why is this needed?
+                    'jsoncpp'
+                ]
+
+# ------------------------------------------
+env.DWAUseComponents(components)
+lib = env.DWASharedLibrary(libname, sources, NO_VARIANT_NAME=True)
+target = env.DWAInstallDso(lib)
+env.DWAComponent(name, LIBS=target, CPPPATH=incdir, COMPONENTS=components)
+
+# Google's Breakpad (See 'breakpad.py')
+env.DWAGenerateBreakpadSymbols(path.dirname(target[0].abspath), lib, target, env)

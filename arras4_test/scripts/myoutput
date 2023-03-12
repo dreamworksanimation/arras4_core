@@ -1,0 +1,239 @@
+Tue Oct  1 16:11:19 PDT 2019
+*********************************************
+****** Test basic client connect and disconnect
+*********************************************
+arras4test --env=stb --prepend=/usr/pic1/prramsey/rez --get-logs  
+Load session simple_test
+[36m2019-10-01T16:11:20.013078 I client[95894]:main: Received http://stb.svc.gld.dreamworks.net/jose/coordinator/1/sessions from Studio Config Service.[0m
+[36m2019-10-01T16:11:20.379596 I client[95894]:main: Connecting via host:port (tealstar.gld.dreamworks.net:46589)[0m
+[36m2019-10-01T16:11:20.380859 I client[95894]:main: Created session with ID 2cf3b788-7828-46e1-9592-6dead2541d44[0m
+[36m2019-10-01T16:11:22.381105 I client[95894]:main: Client connected OK[0m
+[36m2019-10-01T16:11:22.381374 I client[95894]:main: Sent 1 of 1 : TM #1 "from client" (Source d6f0e42e-1f20-4f3e-b892-0d906818ac03)[0m
+[36m2019-10-01T16:11:22.381406 I client[95894]:main: Last message sent : staying connected for 10 seconds[0m
+[36m2019-10-01T16:11:22.382119 I client[95894]:message delivery: Received: TM #1 "from client [forward from testcomp]" (Source d6f0e42e-1f20-4f3e-b892-0d906818ac03)[0m
+[36m2019-10-01T16:11:32.381576 I client[95894]:main: Shutting down session[0m
+[36m2019-10-01T16:11:32.515987 I client[95894]:message delivery: Status Handler : the Arras session has stopped as requested by client shutdown[0m
+[36m2019-10-01T16:11:33.381907 I client[95894]:main: Shutdown status = {"clientDisconnectReason":"kicked","clientStatus":"connected","computations":[{"compStatus":"","cpuUsage5Secs":1.0,"cpuUsage5SecsMax":1.0,"cpuUsage60Secs":2.0,"cpuUsage60SecsMax":2.0,"cpuUsageTotalSecs":2.009999990463257,"execStatus":"stopped","hyperthreaded":false,"lastHeartbeatTime":"2019-10-01 16:11:31,799","lastReceivedMessagesTime":"2019-10-01 16:11:26,799","lastSentMessagesTime":"2019-10-01 16:11:26,799","memoryUsageBytesCurrent":564621312,"memoryUsageBytesMax":564621312,"name":"testcomp","receivedMessagesCount5Secs":0,"receivedMessagesCount60Secs":1,"receivedMessagesCountTotal":1,"sentMessagesCount5Secs":0,"sentMessagesCount60Secs":2,"sentMessagesCountTotal":2,"signal":"not set","stoppedReason":"terminated as requested"}],"execStatus":"stopped","execStoppedReason":"clientShutdown","idleDurationSecs":0,"lastClientReceivedMessageTime":"2019-10-01 16:11:32,381"}
+[0m
+******************************************************************************
+******* Start of logs for session 2cf3b788-7828-46e1-9592-6dead2541d44 *******
+******************************************************************************
+No logs found
+*****************************
+******** End of logs ********
+*****************************
+*********************************************
+****** Test segmentation fault in computation configure()
+*********************************************
+arras4test --env=stb --session=segfault_in_configure --expect-disconnect --expect-connect-error --prepend=/usr/pic1/prramsey/rez --get-logs  
+Load session segfault_in_configure
+[36m2019-10-01T16:11:43.426143 I client[96115]:main: Received http://stb.svc.gld.dreamworks.net/jose/coordinator/1/sessions from Studio Config Service.[0m
+[36m2019-10-01T16:11:43.549287 I client[96115]:main: Connecting via host:port (tealstar.gld.dreamworks.net:46589)[0m
+[36m2019-10-01T16:11:43.550390 I client[96115]:main: Created session with ID ae8325d9-bb18-477b-824d-8b07f6854a18[0m
+[35m2019-10-01T16:11:44.669157 W client[96115]:message delivery: Status Handler : the Arras session has stopped due to: computationExited[0m
+[35m2019-10-01T16:11:44.669226 W client[96115]:message delivery: Computation Status:[0m
+[35m2019-10-01T16:11:44.669282 W client[96115]:message delivery: 	testcomp stopped due to: terminated by a Segmentation fault signal
+Crash report brief:
+ Segmentation fault[0m
+[33m2019-10-01T16:11:45.551934 E client[96115]:message delivery: Source read[0m
+[33m2019-10-01T16:11:45.552054 E client[96115]:message delivery: Thrown exception: Source read[0m
+[33m2019-10-01T16:11:46.550796 E client[96115]:main: Exiting : timed out waiting for engine to be ready[0m
+[36m2019-10-01T16:11:46.551004 I client[96115]:main: Shutting down session[0m
+[36m2019-10-01T16:11:46.551397 I client[96115]:main: Got an exception shutting down as expected: Can't send a message if client is disconnected[0m
+[36m2019-10-01T16:11:46.551458 I client[96115]:main: Shutdown status = {"clientDisconnectReason":"kicked","clientStatus":"connected","computations":[{"compStatus":"","cpuUsage5Secs":0.0,"cpuUsage5SecsMax":0.0,"cpuUsage60Secs":0.0,"cpuUsage60SecsMax":0.0,"cpuUsageTotalSecs":0.0,"execStatus":"stopped","hyperthreaded":false,"lastHeartbeatTime":"","lastReceivedMessagesTime":"","lastSentMessagesTime":"","memoryUsageBytesCurrent":0,"memoryUsageBytesMax":0,"name":"testcomp","receivedMessagesCount5Secs":0,"receivedMessagesCount60Secs":0,"receivedMessagesCountTotal":0,"sentMessagesCount5Secs":0,"sentMessagesCount60Secs":0,"sentMessagesCountTotal":0,"signal":"Segmentation fault","stoppedReason":"terminated by a Segmentation fault signal\nCrash report brief:\n"}],"execStatus":"stopped","execStoppedReason":"computationExited","idleDurationSecs":1,"lastClientReceivedMessageTime":"2019-10-01 16:11:43,550"}
+[0m
+******************************************************************************
+******* Start of logs for session ae8325d9-bb18-477b-824d-8b07f6854a18 *******
+******************************************************************************
+No logs found
+*****************************
+******** End of logs ********
+*****************************
+*********************************************
+****** Test segmentation fault in computation onMessage()
+*********************************************
+arras4test --env=stb --session=segfault_in_onmessage --expect-disconnect --prepend=/usr/pic1/prramsey/rez --get-logs  
+Load session segfault_in_onmessage
+[36m2019-10-01T16:11:56.598736 I client[96306]:main: Received http://stb.svc.gld.dreamworks.net/jose/coordinator/1/sessions from Studio Config Service.[0m
+[36m2019-10-01T16:11:56.733160 I client[96306]:main: Connecting via host:port (tealstar.gld.dreamworks.net:46589)[0m
+[36m2019-10-01T16:11:56.734029 I client[96306]:main: Created session with ID 8f48477a-5241-48b4-aa20-efaebf60fbc9[0m
+[36m2019-10-01T16:11:57.734187 I client[96306]:main: Client connected OK[0m
+[36m2019-10-01T16:11:57.734444 I client[96306]:main: Sent 1 of 1 : TM #1 "from client" (Source a9886e33-5a4f-4e9d-b77b-c599c544a8d8)[0m
+[36m2019-10-01T16:11:57.734476 I client[96306]:main: Last message sent : staying connected for 10 seconds[0m
+[35m2019-10-01T16:11:57.878030 W client[96306]:message delivery: Status Handler : the Arras session has stopped due to: computationExited[0m
+[35m2019-10-01T16:11:57.878075 W client[96306]:message delivery: Computation Status:[0m
+[35m2019-10-01T16:11:57.878148 W client[96306]:message delivery: 	testcomp stopped due to: terminated by a Segmentation fault signal
+Crash report brief:
+ Segmentation fault[0m
+[33m2019-10-01T16:11:58.280888 E client[96306]:message delivery: Source read[0m
+[33m2019-10-01T16:11:58.280942 E client[96306]:message delivery: Thrown exception: Source read[0m
+[36m2019-10-01T16:12:07.734662 I client[96306]:main: Shutting down session[0m
+[36m2019-10-01T16:12:07.734959 I client[96306]:main: Got an exception shutting down as expected: Can't send a message if client is disconnected[0m
+[36m2019-10-01T16:12:07.735021 I client[96306]:main: Shutdown status = {"clientDisconnectReason":"kicked","clientStatus":"connected","computations":[{"compStatus":"","cpuUsage5Secs":0.0,"cpuUsage5SecsMax":0.0,"cpuUsage60Secs":0.0,"cpuUsage60SecsMax":0.0,"cpuUsageTotalSecs":0.009999999776482582,"execStatus":"stopped","hyperthreaded":false,"lastHeartbeatTime":"2019-10-01 16:11:57,230","lastReceivedMessagesTime":"","lastSentMessagesTime":"","memoryUsageBytesCurrent":341262336,"memoryUsageBytesMax":341262336,"name":"testcomp","receivedMessagesCount5Secs":0,"receivedMessagesCount60Secs":0,"receivedMessagesCountTotal":0,"sentMessagesCount5Secs":0,"sentMessagesCount60Secs":0,"sentMessagesCountTotal":0,"signal":"Segmentation fault","stoppedReason":"terminated by a Segmentation fault signal\nCrash report brief:\n"}],"execStatus":"stopped","execStoppedReason":"computationExited","idleDurationSecs":0,"lastClientReceivedMessageTime":"2019-10-01 16:11:57,734"}
+[0m
+******************************************************************************
+******* Start of logs for session 8f48477a-5241-48b4-aa20-efaebf60fbc9 *******
+******************************************************************************
+No logs found
+*****************************
+******** End of logs ********
+*****************************
+*********************************************
+****** Test SIGTERM in computation onMessage()
+*********************************************
+arras4test --env=stb --session=sigterm_in_onmessage --expect-disconnect --prepend=/usr/pic1/prramsey/rez --get-logs  
+Load session sigterm_in_onmessage
+[36m2019-10-01T16:12:17.779492 I client[96508]:main: Received http://stb.svc.gld.dreamworks.net/jose/coordinator/1/sessions from Studio Config Service.[0m
+[36m2019-10-01T16:12:17.898243 I client[96508]:main: Connecting via host:port (tealstar.gld.dreamworks.net:46589)[0m
+[36m2019-10-01T16:12:17.899171 I client[96508]:main: Created session with ID 20acd4e6-1bed-4a41-a93d-7e3ce402fd54[0m
+[36m2019-10-01T16:12:18.899360 I client[96508]:main: Client connected OK[0m
+[36m2019-10-01T16:12:18.899610 I client[96508]:main: Sent 1 of 1 : TM #1 "from client" (Source b93fd83c-7d5c-4652-aed1-a12324f6d0d1)[0m
+[36m2019-10-01T16:12:18.899652 I client[96508]:main: Last message sent : staying connected for 10 seconds[0m
+[35m2019-10-01T16:12:18.991654 W client[96508]:message delivery: Status Handler : the Arras session has stopped due to: computationExited[0m
+[35m2019-10-01T16:12:18.991713 W client[96508]:message delivery: Computation Status:[0m
+[35m2019-10-01T16:12:18.991790 W client[96508]:message delivery: 	testcomp stopped due to: terminated by a Terminated signal
+Crash report brief:
+ Terminated[0m
+[33m2019-10-01T16:12:19.435917 E client[96508]:message delivery: Source read[0m
+[33m2019-10-01T16:12:19.436018 E client[96508]:message delivery: Thrown exception: Source read[0m
+[36m2019-10-01T16:12:28.899845 I client[96508]:main: Shutting down session[0m
+[36m2019-10-01T16:12:28.900401 I client[96508]:main: Got an exception shutting down as expected: Can't send a message if client is disconnected[0m
+[36m2019-10-01T16:12:28.900500 I client[96508]:main: Shutdown status = {"clientDisconnectReason":"kicked","clientStatus":"connected","computations":[{"compStatus":"","cpuUsage5Secs":0.0,"cpuUsage5SecsMax":0.0,"cpuUsage60Secs":0.0,"cpuUsage60SecsMax":0.0,"cpuUsageTotalSecs":0.009999999776482582,"execStatus":"stopped","hyperthreaded":false,"lastHeartbeatTime":"2019-10-01 16:12:18,383","lastReceivedMessagesTime":"","lastSentMessagesTime":"","memoryUsageBytesCurrent":341286912,"memoryUsageBytesMax":341286912,"name":"testcomp","receivedMessagesCount5Secs":0,"receivedMessagesCount60Secs":0,"receivedMessagesCountTotal":0,"sentMessagesCount5Secs":0,"sentMessagesCount60Secs":0,"sentMessagesCountTotal":0,"signal":"Terminated","stoppedReason":"terminated by a Terminated signal\nCrash report brief:\n"}],"execStatus":"stopped","execStoppedReason":"computationExited","idleDurationSecs":0,"lastClientReceivedMessageTime":"2019-10-01 16:12:18,899"}
+[0m
+******************************************************************************
+******* Start of logs for session 20acd4e6-1bed-4a41-a93d-7e3ce402fd54 *******
+******************************************************************************
+No logs found
+*****************************
+******** End of logs ********
+*****************************
+*********************************************
+****** Test SIGKILL in computation onMessage()
+*********************************************
+arras4test --env=stb --session=sigkill_in_onmessage --expect-disconnect --prepend=/usr/pic1/prramsey/rez --get-logs 
+Load session sigkill_in_onmessage
+[36m2019-10-01T16:12:39.245867 I client[96717]:main: Received http://stb.svc.gld.dreamworks.net/jose/coordinator/1/sessions from Studio Config Service.[0m
+[36m2019-10-01T16:12:39.390062 I client[96717]:main: Connecting via host:port (tealstar.gld.dreamworks.net:46589)[0m
+[36m2019-10-01T16:12:39.391018 I client[96717]:main: Created session with ID cd923312-f73c-45b6-b9a7-0bd25af6a6b0[0m
+[36m2019-10-01T16:12:40.391217 I client[96717]:main: Client connected OK[0m
+[36m2019-10-01T16:12:40.391770 I client[96717]:main: Sent 1 of 1 : TM #1 "from client" (Source 3e7a5b84-91ca-43c2-a61e-3ced3780af8c)[0m
+[36m2019-10-01T16:12:40.391809 I client[96717]:main: Last message sent : staying connected for 10 seconds[0m
+[35m2019-10-01T16:12:40.504442 W client[96717]:message delivery: Status Handler : the Arras session has stopped due to: computationExited[0m
+[35m2019-10-01T16:12:40.504494 W client[96717]:message delivery: Computation Status:[0m
+[35m2019-10-01T16:12:40.504555 W client[96717]:message delivery: 	testcomp stopped due to: terminated by a Killed signal
+Crash report brief:
+ Killed[0m
+[33m2019-10-01T16:12:40.993035 E client[96717]:message delivery: Source read[0m
+[33m2019-10-01T16:12:40.993113 E client[96717]:message delivery: Thrown exception: Source read[0m
+[36m2019-10-01T16:12:50.391963 I client[96717]:main: Shutting down session[0m
+[36m2019-10-01T16:12:50.392292 I client[96717]:main: Got an exception shutting down as expected: Can't send a message if client is disconnected[0m
+[36m2019-10-01T16:12:50.392389 I client[96717]:main: Shutdown status = {"clientDisconnectReason":"kicked","clientStatus":"connected","computations":[{"compStatus":"","cpuUsage5Secs":0.0,"cpuUsage5SecsMax":0.0,"cpuUsage60Secs":0.0,"cpuUsage60SecsMax":0.0,"cpuUsageTotalSecs":0.009999999776482582,"execStatus":"stopped","hyperthreaded":false,"lastHeartbeatTime":"2019-10-01 16:12:39,941","lastReceivedMessagesTime":"","lastSentMessagesTime":"","memoryUsageBytesCurrent":408395776,"memoryUsageBytesMax":408395776,"name":"testcomp","receivedMessagesCount5Secs":0,"receivedMessagesCount60Secs":0,"receivedMessagesCountTotal":0,"sentMessagesCount5Secs":0,"sentMessagesCount60Secs":0,"sentMessagesCountTotal":0,"signal":"Killed","stoppedReason":"terminated by a Killed signal\nCrash report brief:\n"}],"execStatus":"stopped","execStoppedReason":"computationExited","idleDurationSecs":0,"lastClientReceivedMessageTime":"2019-10-01 16:12:40,391"}
+[0m
+******************************************************************************
+******* Start of logs for session cd923312-f73c-45b6-b9a7-0bd25af6a6b0 *******
+******************************************************************************
+No logs found
+*****************************
+******** End of logs ********
+*****************************
+*********************************************
+****** Test abort() in computation onMessage()
+*********************************************
+arras4test --env=stb --session=abort_in_onmessage --expect-disconnect --prepend=/usr/pic1/prramsey/rez --get-logs 
+Load session abort_in_onmessage
+[36m2019-10-01T16:13:00.440395 I client[96929]:main: Received http://stb.svc.gld.dreamworks.net/jose/coordinator/1/sessions from Studio Config Service.[0m
+[36m2019-10-01T16:13:00.570957 I client[96929]:main: Connecting via host:port (tealstar.gld.dreamworks.net:46589)[0m
+[36m2019-10-01T16:13:00.571973 I client[96929]:main: Created session with ID aee908a7-f83d-49f2-9b05-33b363cf8e1e[0m
+[36m2019-10-01T16:13:01.572192 I client[96929]:main: Client connected OK[0m
+[36m2019-10-01T16:13:01.572558 I client[96929]:main: Sent 1 of 1 : TM #1 "from client" (Source 6a1d2ac1-a4fa-4977-9fde-cd6af1906b11)[0m
+[36m2019-10-01T16:13:01.572591 I client[96929]:main: Last message sent : staying connected for 10 seconds[0m
+[35m2019-10-01T16:13:01.813873 W client[96929]:message delivery: Status Handler : the Arras session has stopped due to: computationExited[0m
+[35m2019-10-01T16:13:01.813958 W client[96929]:message delivery: Computation Status:[0m
+[35m2019-10-01T16:13:01.814027 W client[96929]:message delivery: 	testcomp stopped due to: terminated by a Aborted signal
+Crash report brief:
+ Aborted[0m
+[33m2019-10-01T16:13:02.115548 E client[96929]:message delivery: Source read[0m
+[33m2019-10-01T16:13:02.115607 E client[96929]:message delivery: Thrown exception: Source read[0m
+[36m2019-10-01T16:13:11.572745 I client[96929]:main: Shutting down session[0m
+[36m2019-10-01T16:13:11.573056 I client[96929]:main: Got an exception shutting down as expected: Can't send a message if client is disconnected[0m
+[36m2019-10-01T16:13:11.573099 I client[96929]:main: Shutdown status = {"clientDisconnectReason":"kicked","clientStatus":"connected","computations":[{"compStatus":"","cpuUsage5Secs":0.0,"cpuUsage5SecsMax":0.0,"cpuUsage60Secs":0.0,"cpuUsage60SecsMax":0.0,"cpuUsageTotalSecs":0.009999999776482582,"execStatus":"stopped","hyperthreaded":false,"lastHeartbeatTime":"2019-10-01 16:13:01,062","lastReceivedMessagesTime":"","lastSentMessagesTime":"","memoryUsageBytesCurrent":408395776,"memoryUsageBytesMax":408395776,"name":"testcomp","receivedMessagesCount5Secs":0,"receivedMessagesCount60Secs":0,"receivedMessagesCountTotal":0,"sentMessagesCount5Secs":0,"sentMessagesCount60Secs":0,"sentMessagesCountTotal":0,"signal":"Aborted","stoppedReason":"terminated by a Aborted signal\nCrash report brief:\n"}],"execStatus":"stopped","execStoppedReason":"computationExited","idleDurationSecs":0,"lastClientReceivedMessageTime":"2019-10-01 16:13:01,572"}
+[0m
+******************************************************************************
+******* Start of logs for session aee908a7-f83d-49f2-9b05-33b363cf8e1e *******
+******************************************************************************
+No logs found
+*****************************
+******** End of logs ********
+*****************************
+*********************************************
+****** Test computation hang and ignore sigterm (force kill)
+*********************************************
+arras4test --env=stb --session=hang_and_ignore_sigterm --prepend=/usr/pic1/prramsey/rez --get-logs 
+Load session hang_and_ignore_sigterm
+[36m2019-10-01T16:13:21.631201 I client[97172]:main: Received http://stb.svc.gld.dreamworks.net/jose/coordinator/1/sessions from Studio Config Service.[0m
+[36m2019-10-01T16:13:21.768104 I client[97172]:main: Connecting via host:port (tealstar.gld.dreamworks.net:46589)[0m
+[36m2019-10-01T16:13:21.769182 I client[97172]:main: Created session with ID e862bc3a-1e97-41c6-91ed-dd8acde6c930[0m
+[36m2019-10-01T16:13:23.769480 I client[97172]:main: Client connected OK[0m
+[36m2019-10-01T16:13:23.769777 I client[97172]:main: Sent 1 of 1 : TM #1 "from client" (Source 4f039853-123a-4469-9ffd-8de126d91bab)[0m
+[36m2019-10-01T16:13:23.769810 I client[97172]:main: Last message sent : staying connected for 10 seconds[0m
+[36m2019-10-01T16:13:33.770014 I client[97172]:main: Shutting down session[0m
+[36m2019-10-01T16:13:43.885866 I client[97172]:message delivery: Status Handler : the Arras session has stopped as requested by client shutdown[0m
+[36m2019-10-01T16:13:44.771450 I client[97172]:main: Shutdown status = {"clientDisconnectReason":"kicked","clientStatus":"connected","computations":[{"compStatus":"","cpuUsage5Secs":0.0,"cpuUsage5SecsMax":0.0,"cpuUsage60Secs":0.0,"cpuUsage60SecsMax":0.0,"cpuUsageTotalSecs":0.009999999776482582,"execStatus":"sent sigkill","hyperthreaded":false,"lastHeartbeatTime":"2019-10-01 16:13:33,029","lastReceivedMessagesTime":"","lastSentMessagesTime":"2019-10-01 16:13:28,029","memoryUsageBytesCurrent":564645888,"memoryUsageBytesMax":564645888,"name":"testcomp","receivedMessagesCount5Secs":0,"receivedMessagesCount60Secs":0,"receivedMessagesCountTotal":0,"sentMessagesCount5Secs":0,"sentMessagesCount60Secs":1,"sentMessagesCountTotal":1,"signal":"not set","stoppedReason":"terminated by a Terminated signal\nCrash report brief:\n"}],"execStatus":"stopped","execStoppedReason":"clientShutdown","idleDurationSecs":10,"lastClientReceivedMessageTime":"2019-10-01 16:13:33,770"}
+[0m
+******************************************************************************
+******* Start of logs for session e862bc3a-1e97-41c6-91ed-dd8acde6c930 *******
+******************************************************************************
+No logs found
+*****************************
+******** End of logs ********
+*****************************
+*********************************************
+****** Test return Result::Invalid from computations onMessage() function
+*********************************************
+arras4test --env=stb --session=invalid_in_onmessage --prepend=/usr/pic1/prramsey/rez --get-logs   --expected-status=invalid_in_onmessage_exitstatus --expect-disconnect
+Load session invalid_in_onmessage
+[36m2019-10-01T16:13:54.842443 I client[97414]:main: Received http://stb.svc.gld.dreamworks.net/jose/coordinator/1/sessions from Studio Config Service.[0m
+[36m2019-10-01T16:13:54.960127 I client[97414]:main: Connecting via host:port (tealstar.gld.dreamworks.net:46589)[0m
+[36m2019-10-01T16:13:54.961113 I client[97414]:main: Created session with ID 9339e9f3-1a8b-46ff-af2f-165d06e1ad4c[0m
+[36m2019-10-01T16:13:55.961309 I client[97414]:main: Client connected OK[0m
+[36m2019-10-01T16:13:55.961756 I client[97414]:main: Sent 1 of 1 : TM #1 "from client" (Source 0885cdf2-cc4d-4bb4-916a-349ccabd5cf5)[0m
+[36m2019-10-01T16:13:55.961814 I client[97414]:main: Last message sent : staying connected for 10 seconds[0m
+[35m2019-10-01T16:13:56.006118 W client[97414]:message delivery: Status Handler : the Arras session has stopped due to: computationExited[0m
+[35m2019-10-01T16:13:56.006167 W client[97414]:message delivery: Computation Status:[0m
+[35m2019-10-01T16:13:56.006237 W client[97414]:message delivery: 	testcomp stopped due to: terminated because an exception was thrown by the code[0m
+[33m2019-10-01T16:13:56.555997 E client[97414]:message delivery: Source read[0m
+[33m2019-10-01T16:13:56.556121 E client[97414]:message delivery: Thrown exception: Source read[0m
+[36m2019-10-01T16:14:05.962033 I client[97414]:main: Shutting down session[0m
+[36m2019-10-01T16:14:05.962614 I client[97414]:main: Got an exception shutting down as expected: Can't send a message if client is disconnected[0m
+[36m2019-10-01T16:14:05.962685 I client[97414]:main: Shutdown status = {"clientDisconnectReason":"kicked","clientStatus":"connected","computations":[{"compStatus":"","cpuUsage5Secs":0.0,"cpuUsage5SecsMax":0.0,"cpuUsage60Secs":0.0,"cpuUsage60SecsMax":0.0,"cpuUsageTotalSecs":0.009999999776482582,"execStatus":"stopped","hyperthreaded":false,"lastHeartbeatTime":"2019-10-01 16:13:55,504","lastReceivedMessagesTime":"","lastSentMessagesTime":"","memoryUsageBytesCurrent":341286912,"memoryUsageBytesMax":341286912,"name":"testcomp","receivedMessagesCount5Secs":0,"receivedMessagesCount60Secs":0,"receivedMessagesCountTotal":0,"sentMessagesCount5Secs":0,"sentMessagesCount60Secs":0,"sentMessagesCountTotal":0,"signal":"not set","stoppedReason":"terminated because an exception was thrown by the code"}],"execStatus":"stopped","execStoppedReason":"computationExited","idleDurationSecs":0,"lastClientReceivedMessageTime":"2019-10-01 16:13:55,961"}
+[0m
+[36m2019-10-01T16:14:05.962728 I client[97414]:main: Expected shutdown status = {
+  "clientDisconnectReason": "kicked",
+  "clientStatus": "connected",
+  "computations": [
+    {
+      "compStatus": "",
+      "execStatus": "stopped",
+      "name": "testcomp",
+      "signal": "not set",
+      "stoppedReason": "terminated because an exception was thrown by the code"
+    }
+  ],
+  "execStatus": "stopped",
+  "execStoppedReason": "compExited testcomp terminated because an exception was thrown by the code",
+}
+[0m
+[33m2019-10-01T16:14:05.963068 E client[97414]:main: toplevel.execStoppedReason doesn't match (expected
+compExited testcomp terminated because an exception was thrown by the code
+found
+computationExited
+)
+[0m
+[33m2019-10-01T16:14:05.963124 E client[97414]:main: Unexpected shutdown status[0m
+******************************************************************************
+******* Start of logs for session 9339e9f3-1a8b-46ff-af2f-165d06e1ad4c *******
+******************************************************************************
+No logs found
+*****************************
+******** End of logs ********
+*****************************

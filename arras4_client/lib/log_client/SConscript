@@ -1,0 +1,33 @@
+Import('env')
+from os import path
+# extract library name from current/parent path
+modname = path.basename(path.abspath('..'))
+libname = path.basename(path.abspath('.'))
+# --------------------------------------------------------------------------
+name       = libname
+sources    = env.DWAGlob('*.cc')
+incdir     = [str(env.Dir('../..').srcnode())]
+components =  [
+   'boost_headers',
+   'arras4_log',
+   'arras4_network',
+   'message_api',
+   'jsoncpp'
+ ]
+# --------------------------------------------------------------------------
+
+publicHeaders = [
+    'LogClient.h'
+]
+
+
+env.DWAUseComponents(components)
+env.Append(CPPPATH=incdir)
+lib = env.DWASharedLibrary(name, sources)
+target = env.DWAInstallLib(lib)
+env.DWAInstallInclude(publicHeaders, 'log_client')
+env.DWAComponent(name, LIBS=target, CPPPATH=incdir, COMPONENTS=components)
+env.DWAInstallSConscriptStub(
+    name, LIBS=target, CPPPATH=[env.Dir('$INSTALL_DIR/include')],
+    COMPONENTS=components)
+env.DWALinkValidate(name)

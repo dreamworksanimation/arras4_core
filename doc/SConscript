@@ -1,0 +1,17 @@
+Import('env')
+ 
+env.Tool('dwa_doxygen')
+ 
+#the name of the folio
+folioName = "arras4_core"
+ 
+# Files and directories to use as input to Doxygen
+inputFiles = ['#arras4_client/lib']
+inputFiles = ['#arras4_computation_api/lib']
+inputFiles = ['#arras4_core_impl/lib']
+inputFiles = ['#arras4_log/lib']
+inputFiles = ['#arras4_message_api/lib']
+inputFiles = ['#arras4_network/lib']
+inputFiles = ['#arras4_test/lib']
+
+dox = env.DWADoxygenSimple(folioName, inputFiles)

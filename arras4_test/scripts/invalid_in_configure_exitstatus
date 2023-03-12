@@ -1,0 +1,16 @@
+{
+  "clientDisconnectReason": "kicked",
+  "clientStatus": "connected",
+  "computations": [
+    {
+      "compStatus": "",
+      "execStatus": "stopped",
+      "name": "testcomp",
+      "signal": "not set",
+      "stoppedReason": "terminated because initialization of the computation failed"
+
+    }
+  ],
+  "execStatus": "stopped",
+  "execStoppedReason": "compExited testcomp terminated because initialization of the computation failed",
+}

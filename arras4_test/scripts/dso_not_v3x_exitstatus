@@ -1,0 +1,15 @@
+{
+  "clientDisconnectReason": "kicked",
+  "clientStatus": "connected",
+  "computations": [
+    {
+      "compStatus": "",
+      "execStatus": "stopped",
+      "name": "bad_guy",
+      "signal": "not set",
+      "stoppedReason": "terminated by a Segmentation fault signal\nCrash report brief:\n"
+    }
+  ],
+  "execStatus": "stopped",
+  "execStoppedReason": "compExited bad_guy terminated by a Segmentation fault signal",
+}

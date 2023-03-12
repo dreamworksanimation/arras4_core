@@ -1,0 +1,38 @@
+Import('env')
+from os import path
+# extract library name from current/parent path
+modname = path.basename(path.abspath('..'))
+libname = path.basename(path.abspath('.'))
+# --------------------------------------------------------------------------
+name       = libname
+sources    = env.DWAGlob('*.cc')
+incdir     = [str(env.Dir('../..').srcnode())]
+components =  [             
+   'arras4_http',
+   'client_api',
+   'arras4_athena',
+   'arras4_log',
+   'arras4_network',
+   'boost_headers'
+ ]
+# --------------------------------------------------------------------------
+
+publicHeaders = [
+    'sdk.h',
+    'FrameUtils.h',
+    'MultiSession.h',
+    'FarmHostsForArrasUtils.h'
+]
+
+sources.remove('./MultiSession.cc')
+
+env.DWAUseComponents(components)
+env.Append(CPPPATH=incdir)
+lib = env.DWASharedLibrary(name, sources)
+target = env.DWAInstallLib(lib)
+env.DWAInstallInclude(publicHeaders, 'sdk')
+env.DWAComponent(name, LIBS=target, CPPPATH=incdir, COMPONENTS=components)
+env.DWAInstallSConscriptStub(
+    name, LIBS=target, CPPPATH=[env.Dir('$INSTALL_DIR/include')],
+    COMPONENTS=components)
+env.DWALinkValidate(name)

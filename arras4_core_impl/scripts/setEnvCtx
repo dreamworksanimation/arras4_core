@@ -1,0 +1,133 @@
+#!/usr/bin/env python
+# Copyright 2023 DreamWorks Animation LLC and Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+
+from __future__ import print_function
+import argparse
+import sys
+import os
+import json
+import subprocess
+
+def err(m=None):
+    if m is not None:
+        print(str(m))
+    sys.exit(-1)
+
+def parse_args():
+
+    parser = argparse.ArgumentParser(description='Set environment context.')
+    parser.add_argument('name',help='context name')
+    parser.add_argument('-c','--current', action='store_true',
+                        help='store current rez context')
+    parser.add_argument('-r','--rez-args', nargs=argparse.REMAINDER,
+                        help='run rez-env to generate context') 
+    parser.add_argument('-v','--vars', action='store_const', 
+                        dest='mode', const='vars', default='vars',
+                        help='record context as environment variables')
+    parser.add_argument('-b','--bash', action='store_const', 
+                        dest='mode', const='bash',
+                        help='record context as a bash script')
+    parser.add_argument('--abridge',action='store_true',
+                        help='remove "REZ_" variables')
+    parser.add_argument('-p','--pseudo-compiler',
+                        help='pseudo-compiler to set')
+                        
+    
+    return parser.parse_args();
+
+def get_current(ctxtype):
+    
+    return run_cmd('rez-context -i -f {}'.format(ctxtype))
+
+def get_rez(args,ctxtype):
+
+    argstr = ' '.join(args) # doesn't handle spaces/escapes...
+    cmd = 'rez-env {} -o - | rez-context -i -f {} -'.format(argstr,ctxtype)
+    return run_cmd(cmd)
+
+def run_cmd(cmd):
+
+    try:
+        p = subprocess.Popen(cmd, shell=True,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
+        (out,err) = p.communicate()
+    except OSError as error:
+        print("failed to run: '{}'".format(cmd))
+        err("exception: {}".format(error))
+
+    if p.returncode != 0:
+        print("command failed: '{}'".format(cmd))
+        err("stderr: {}".format(err))
+
+    return out
+
+def main():
+
+    args = parse_args()
+    if args.current and (args.rez_args is not None):
+        err("Cannot specify both -c/--current and -r/--rez-args")
+    elif (not args.current) and (args.rez_args is None):
+        err("Must specify one of -c/--current or -r/--rez-args")
+
+    envCtxsFile = os.environ.get('ENV_CONTEXTS')
+    if envCtxsFile is None:
+        err("ENV_CONTEXTS variable must be set")
+
+    exists = os.path.isfile(envCtxsFile)
+    if exists:
+        try:
+            with open(envCtxsFile) as f:
+                envCtxs = json.load(f)
+        except IOError as ioe:
+            err(ioe)
+        except ValueError as ve:
+            err('Loading {}: {}'.format(envCtxsFile,ve))
+    else:
+        envCtxs = {}
+
+    if args.mode == 'bash':
+        ctxtype = 'bash' 
+    else:
+        ctxtype = 'json'
+
+    if args.current: 
+        datastr = get_current(ctxtype)
+    else:
+        datastr = get_rez(args.rez_args,ctxtype)
+
+    if args.mode == 'vars':
+
+        try:
+            data = json.loads(datastr)
+        except ValueError as ve:
+            err('Failed to read command output: {}'.format(ve))
+        
+        if args.abridge:
+            data = {k : v for (k,v) in data.items() if not k.startswith('REZ_')}
+
+        envCtxs[args.name] = { 'environment':data }  
+
+    elif args.mode == 'bash':
+        
+        envCtxs[args.name] = { 'packaging_system':'bash',
+                               'script':datastr }
+    else:
+        
+        err('Unknown mode: {}'.format(args.mode))
+
+    if args.pseudo_compiler is not None:
+        envCtxs[args.name]['pseudo-compiler'] = args.pseudo_compiler
+
+    try:
+        with open(envCtxsFile,'w') as f:
+            json.dump(envCtxs,f,indent=4)
+    except IOError as ioe:
+        err(ioe)
+        sys.exit(-1)
+
+    print("{} file {}".format('Updated' if exists else 'Created',
+                              envCtxsFile))
+
+main()

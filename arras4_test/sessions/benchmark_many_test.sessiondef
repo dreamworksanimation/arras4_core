@@ -1,0 +1,491 @@
+{
+    "name": "benchmark_test",
+    "description": "computation echos messages back to client",
+    "computations": {
+        "(client)": {
+            "messages": {
+                "benchcomp0": "For_client",
+                "benchcomp1": "For_client",
+                "benchcomp2": "For_client",
+                "benchcomp3": "For_client", 
+                "benchcomp4": "For_client", 
+                "benchcomp5": "For_client", 
+                "benchcomp6": "For_client", 
+                "benchcomp7": "For_client", 
+                "benchcomp8": "For_client", 
+                "benchcomp9": "For_client", 
+                "benchcomp10": "For_client",
+                "benchcomp11": "For_client",
+                "benchcomp12": "For_client",
+                "benchcomp13": "For_client",
+                "benchcomp14": "For_client",
+                "benchcomp15": "For_client"
+            }
+        }, 
+        "benchcomp0": {
+            "dso": "libarras4_benchmark_computation.so", 
+            "entry": "yes", 
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 2048
+                }
+            },
+            "messages": {
+                "(client)": "For_benchcomp0", 
+                "benchcomp1": "For_benchcomp0", 
+                "benchcomp2": "For_benchcomp0",
+                "benchcomp3": "For_benchcomp0", 
+                "benchcomp4": "For_benchcomp0", 
+                "benchcomp5": "For_benchcomp0", 
+                "benchcomp6": "For_benchcomp0", 
+                "benchcomp7": "For_benchcomp0", 
+                "benchcomp8": "For_benchcomp0", 
+                "benchcomp9": "For_benchcomp0", 
+                "benchcomp10": "For_benchcomp0",
+                "benchcomp11": "For_benchcomp0",
+                "benchcomp12": "For_benchcomp0",
+                "benchcomp13": "For_benchcomp0",
+                "benchcomp14": "For_benchcomp0",
+                "benchcomp15": "For_benchcomp0"
+            }
+        },
+        "benchcomp1": {
+            "dso": "libarras4_benchmark_computation.so", 
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 2048
+                }
+            },
+            "messages": {
+                "(client)": "For_benchcomp1",
+                "benchcomp0": "For_benchcomp1", 
+                "benchcomp2": "For_benchcomp1", 
+                "benchcomp3": "For_benchcomp1", 
+                "benchcomp4": "For_benchcomp1", 
+                "benchcomp5": "For_benchcomp1", 
+                "benchcomp6": "For_benchcomp1", 
+                "benchcomp7": "For_benchcomp1", 
+                "benchcomp8": "For_benchcomp1", 
+                "benchcomp9": "For_benchcomp1", 
+                "benchcomp10": "For_benchcomp1", 
+                "benchcomp11": "For_benchcomp1", 
+                "benchcomp12": "For_benchcomp1", 
+                "benchcomp13": "For_benchcomp1", 
+                "benchcomp14": "For_benchcomp1", 
+                "benchcomp15": "For_benchcomp1"
+            }
+        },
+        "benchcomp2": {
+            "dso": "libarras4_benchmark_computation.so", 
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 2048
+                }
+            },
+            "messages": {
+                "(client)": "For_benchcomp2",
+                "benchcomp0": "For_benchcomp2", 
+                "benchcomp1": "For_benchcomp2", 
+                "benchcomp3": "For_benchcomp2", 
+                "benchcomp4": "For_benchcomp2", 
+                "benchcomp5": "For_benchcomp2", 
+                "benchcomp6": "For_benchcomp2", 
+                "benchcomp7": "For_benchcomp2", 
+                "benchcomp8": "For_benchcomp2", 
+                "benchcomp9": "For_benchcomp2", 
+                "benchcomp10": "For_benchcomp2", 
+                "benchcomp11": "For_benchcomp2", 
+                "benchcomp12": "For_benchcomp2", 
+                "benchcomp13": "For_benchcomp2", 
+                "benchcomp14": "For_benchcomp2", 
+                "benchcomp15": "For_benchcomp2"
+            }
+        },
+        "benchcomp3": {
+            "dso": "libarras4_benchmark_computation.so", 
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 2048
+                }
+            },
+            "messages": {
+                "(client)": "For_benchcomp3",
+                "benchcomp0": "For_benchcomp3", 
+                "benchcomp1": "For_benchcomp3", 
+                "benchcomp2": "For_benchcomp3", 
+                "benchcomp4": "For_benchcomp3", 
+                "benchcomp5": "For_benchcomp3", 
+                "benchcomp6": "For_benchcomp3", 
+                "benchcomp7": "For_benchcomp3", 
+                "benchcomp8": "For_benchcomp3", 
+                "benchcomp9": "For_benchcomp3", 
+                "benchcomp10": "For_benchcomp3",
+                "benchcomp11": "For_benchcomp3", 
+                "benchcomp12": "For_benchcomp3", 
+                "benchcomp13": "For_benchcomp3", 
+                "benchcomp14": "For_benchcomp3", 
+                "benchcomp15": "For_benchcomp3" 
+            }
+        },
+        "benchcomp4": {
+            "dso": "libarras4_benchmark_computation.so", 
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 2048
+                }
+            },
+            "messages": {
+                "(client)": "For_benchcomp4",
+                "benchcomp0": "For_benchcomp4", 
+                "benchcomp1": "For_benchcomp4", 
+                "benchcomp2": "For_benchcomp4", 
+                "benchcomp3": "For_benchcomp4", 
+                "benchcomp5": "For_benchcomp4", 
+                "benchcomp6": "For_benchcomp4", 
+                "benchcomp7": "For_benchcomp4", 
+                "benchcomp8": "For_benchcomp4", 
+                "benchcomp9": "For_benchcomp4", 
+                "benchcomp10": "For_benchcomp4",
+                "benchcomp11": "For_benchcomp4", 
+                "benchcomp12": "For_benchcomp4", 
+                "benchcomp13": "For_benchcomp4",
+                "benchcomp14": "For_benchcomp4", 
+                "benchcomp15": "For_benchcomp4" 
+            }
+        },
+        "benchcomp5": {
+            "dso": "libarras4_benchmark_computation.so", 
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 2048
+                }
+            },
+            "messages": {
+                "(client)": "For_benchcomp5",
+                "benchcomp0": "For_benchcomp5", 
+                "benchcomp1": "For_benchcomp5", 
+                "benchcomp2": "For_benchcomp5", 
+                "benchcomp3": "For_benchcomp5", 
+                "benchcomp4": "For_benchcomp5", 
+                "benchcomp6": "For_benchcomp5", 
+                "benchcomp7": "For_benchcomp5", 
+                "benchcomp8": "For_benchcomp5", 
+                "benchcomp9": "For_benchcomp5", 
+                "benchcomp10": "For_benchcomp5", 
+                "benchcomp11": "For_benchcomp5",
+                "benchcomp12": "For_benchcomp5", 
+                "benchcomp13": "For_benchcomp5", 
+                "benchcomp14": "For_benchcomp5", 
+                "benchcomp15": "For_benchcomp5" 
+            }
+        },
+        "benchcomp6": {
+            "dso": "libarras4_benchmark_computation.so", 
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 2048
+                }
+            },
+            "messages": {
+                "(client)": "For_benchcomp6",
+                "benchcomp0": "For_benchcomp6", 
+                "benchcomp1": "For_benchcomp6", 
+                "benchcomp2": "For_benchcomp6", 
+                "benchcomp3": "For_benchcomp6", 
+                "benchcomp4": "For_benchcomp6", 
+                "benchcomp5": "For_benchcomp6", 
+                "benchcomp7": "For_benchcomp6", 
+                "benchcomp8": "For_benchcomp6", 
+                "benchcomp9": "For_benchcomp6", 
+                "benchcomp10": "For_benchcomp6", 
+                "benchcomp11": "For_benchcomp6", 
+                "benchcomp12": "For_benchcomp6", 
+                "benchcomp13": "For_benchcomp6", 
+                "benchcomp14": "For_benchcomp6", 
+                "benchcomp15": "For_benchcomp6" 
+            }
+        },
+        "benchcomp7": {
+            "dso": "libarras4_benchmark_computation.so", 
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 2048
+                }
+            },
+            "messages": {
+                "(client)": "For_benchcomp7",
+                "benchcomp0": "For_benchcomp7", 
+                "benchcomp1": "For_benchcomp7", 
+                "benchcomp2": "For_benchcomp7", 
+                "benchcomp3": "For_benchcomp7",
+                "benchcomp4": "For_benchcomp7", 
+                "benchcomp5": "For_benchcomp7", 
+                "benchcomp6": "For_benchcomp7", 
+                "benchcomp8": "For_benchcomp7", 
+                "benchcomp9": "For_benchcomp7", 
+                "benchcomp10": "For_benchcomp7", 
+                "benchcomp11": "For_benchcomp7",
+                "benchcomp12": "For_benchcomp7", 
+                "benchcomp13": "For_benchcomp7", 
+                "benchcomp14": "For_benchcomp7", 
+                "benchcomp15": "For_benchcomp7" 
+            }
+        },
+        "benchcomp8": {
+            "dso": "libarras4_benchmark_computation.so", 
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 2048
+                }
+            },
+            "messages": {
+                "(client)": "For_benchcomp8",
+                "benchcomp0": "For_benchcomp8", 
+                "benchcomp1": "For_benchcomp8", 
+                "benchcomp2": "For_benchcomp8", 
+                "benchcomp3": "For_benchcomp8", 
+                "benchcomp4": "For_benchcomp8", 
+                "benchcomp5": "For_benchcomp8", 
+                "benchcomp6": "For_benchcomp8", 
+                "benchcomp7": "For_benchcomp8", 
+                "benchcomp9": "For_benchcomp8", 
+                "benchcomp10": "For_benchcomp8", 
+                "benchcomp11": "For_benchcomp8", 
+                "benchcomp12": "For_benchcomp8", 
+                "benchcomp13": "For_benchcomp8", 
+                "benchcomp14": "For_benchcomp8",
+                "benchcomp15": "For_benchcomp8" 
+            }
+        },
+        "benchcomp9": {
+            "dso": "libarras4_benchmark_computation.so", 
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 2048
+                }
+            },
+            "messages": {
+                "(client)": "For_benchcomp9",
+                "benchcomp0": "For_benchcomp9", 
+                "benchcomp1": "For_benchcomp9", 
+                "benchcomp2": "For_benchcomp9", 
+                "benchcomp3": "For_benchcomp9", 
+                "benchcomp4": "For_benchcomp9", 
+                "benchcomp5": "For_benchcomp9", 
+                "benchcomp6": "For_benchcomp9", 
+                "benchcomp7": "For_benchcomp9", 
+                "benchcomp8": "For_benchcomp9", 
+                "benchcomp10": "For_benchcomp9",
+                "benchcomp11": "For_benchcomp9", 
+                "benchcomp12": "For_benchcomp9", 
+                "benchcomp13": "For_benchcomp9", 
+                "benchcomp14": "For_benchcomp9", 
+                "benchcomp15": "For_benchcomp9" 
+            }
+        },
+        "benchcomp10": {
+            "dso": "libarras4_benchmark_computation.so", 
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 2048
+                }
+            },
+            "messages": {
+                "(client)": "For_benchcomp10",
+                "benchcomp0": "For_benchcomp10",
+                "benchcomp1": "For_benchcomp10", 
+                "benchcomp2": "For_benchcomp10", 
+                "benchcomp3": "For_benchcomp10", 
+                "benchcomp4": "For_benchcomp10", 
+                "benchcomp5": "For_benchcomp10", 
+                "benchcomp6": "For_benchcomp10", 
+                "benchcomp7": "For_benchcomp10", 
+                "benchcomp8": "For_benchcomp10", 
+                "benchcomp9": "For_benchcomp10", 
+                "benchcomp11": "For_benchcomp10", 
+                "benchcomp12": "For_benchcomp10", 
+                "benchcomp13": "For_benchcomp10", 
+                "benchcomp14": "For_benchcomp10", 
+                "benchcomp15": "For_benchcomp10" 
+            }
+        },
+        "benchcomp11": {
+            "dso": "libarras4_benchmark_computation.so", 
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 2048
+                }
+            },
+            "messages": {
+                "(client)": "For_benchcomp11",
+                "benchcomp0": "For_benchcomp11", 
+                "benchcomp1": "For_benchcomp11", 
+                "benchcomp2": "For_benchcomp11", 
+                "benchcomp3": "For_benchcomp11", 
+                "benchcomp4": "For_benchcomp11", 
+                "benchcomp5": "For_benchcomp11", 
+                "benchcomp6": "For_benchcomp11", 
+                "benchcomp7": "For_benchcomp11", 
+                "benchcomp8": "For_benchcomp11", 
+                "benchcomp9": "For_benchcomp11", 
+                "benchcomp10": "For_benchcomp11", 
+                "benchcomp12": "For_benchcomp11", 
+                "benchcomp13": "For_benchcomp11", 
+                "benchcomp14": "For_benchcomp11", 
+                "benchcomp15": "For_benchcomp11" 
+            }
+        },
+        "benchcomp12": {
+            "dso": "libarras4_benchmark_computation.so", 
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 2048
+                }
+            },
+            "messages": {
+                "(client)": "For_benchcomp12",
+                "benchcomp0": "For_benchcomp12", 
+                "benchcomp1": "For_benchcomp12", 
+                "benchcomp2": "For_benchcomp12", 
+                "benchcomp3": "For_benchcomp12", 
+                "benchcomp4": "For_benchcomp12", 
+                "benchcomp5": "For_benchcomp12", 
+                "benchcomp6": "For_benchcomp12", 
+                "benchcomp7": "For_benchcomp12", 
+                "benchcomp8": "For_benchcomp12", 
+                "benchcomp9": "For_benchcomp12", 
+                "benchcomp10": "For_benchcomp12", 
+                "benchcomp11": "For_benchcomp12", 
+                "benchcomp13": "For_benchcomp12", 
+                "benchcomp14": "For_benchcomp12", 
+                "benchcomp15": "For_benchcomp12" 
+            }
+        },
+        "benchcomp13": {
+            "dso": "libarras4_benchmark_computation.so", 
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 2048
+                }
+            },
+            "messages": {
+                "(client)": "For_benchcomp13",
+                "benchcomp0": "For_benchcomp13", 
+                "benchcomp1": "For_benchcomp13", 
+                "benchcomp2": "For_benchcomp13", 
+                "benchcomp3": "For_benchcomp13", 
+                "benchcomp4": "For_benchcomp13", 
+                "benchcomp5": "For_benchcomp13", 
+                "benchcomp6": "For_benchcomp13", 
+                "benchcomp7": "For_benchcomp13", 
+                "benchcomp8": "For_benchcomp13", 
+                "benchcomp9": "For_benchcomp13", 
+                "benchcomp10": "For_benchcomp13", 
+                "benchcomp11": "For_benchcomp13", 
+                "benchcomp12": "For_benchcomp13", 
+                "benchcomp14": "For_benchcomp13", 
+                "benchcomp15": "For_benchcomp13" 
+            }
+        },
+        "benchcomp14": {
+            "dso": "libarras4_benchmark_computation.so", 
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 2048
+                }
+            },
+            "messages": {
+                "(client)": "For_benchcomp14",
+                "benchcomp0": "For_benchcomp14", 
+                "benchcomp1": "For_benchcomp14", 
+                "benchcomp2": "For_benchcomp14", 
+                "benchcomp3": "For_benchcomp14", 
+                "benchcomp4": "For_benchcomp14", 
+                "benchcomp5": "For_benchcomp14", 
+                "benchcomp6": "For_benchcomp14", 
+                "benchcomp7": "For_benchcomp14", 
+                "benchcomp8": "For_benchcomp14", 
+                "benchcomp9": "For_benchcomp14", 
+                "benchcomp10": "For_benchcomp14",
+                "benchcomp11": "For_benchcomp14", 
+                "benchcomp12": "For_benchcomp14", 
+                "benchcomp13": "For_benchcomp14", 
+                "benchcomp15": "For_benchcomp14" 
+            }
+        },
+        "benchcomp15": {
+            "dso": "libarras4_benchmark_computation.so", 
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 2048
+                }
+            },
+            "messages": {
+                "(client)": "For_benchcomp15",
+                "benchcomp0": "For_benchcomp15", 
+                "benchcomp1": "For_benchcomp15", 
+                "benchcomp2": "For_benchcomp15", 
+                "benchcomp3": "For_benchcomp15", 
+                "benchcomp4": "For_benchcomp15", 
+                "benchcomp5": "For_benchcomp15", 
+                "benchcomp6": "For_benchcomp15", 
+                "benchcomp7": "For_benchcomp15", 
+                "benchcomp8": "For_benchcomp15", 
+                "benchcomp9": "For_benchcomp15", 
+                "benchcomp10": "For_benchcomp15", 
+                "benchcomp11": "For_benchcomp15", 
+                "benchcomp12": "For_benchcomp15", 
+                "benchcomp13": "For_benchcomp15", 
+                "benchcomp14": "For_benchcomp15" 
+            }
+        }
+    }
+}

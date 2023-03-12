@@ -1,0 +1,3 @@
+# msgPlay command
+
+This is a tool that plays back messages that have been recorded from an Arras session. The messages are sent to an IPC socket : the other end of which is usually an invocation of **runComp**. It is different from the **clientMsgPlay** tool in *arras4_client*, and is generally used to play back messages recorded as incoming to a specific computation. It is used primarily for testing/debugging.

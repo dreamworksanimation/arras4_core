@@ -1,0 +1,49 @@
+rez1
+setenv REZ_PACKAGES_PATH /rel/test/prramsey/rez:/rel/packages:/rel/lang/python/packages
+run_node.sh
+
+# these aren't really meant to run as a script but rather to
+# cut and past to the command line to do the particular operation
+# They could probably made into individual commands
+
+rez-env arras4_test
+# yoyo operation
+# This is a rapid parallel session create and destroy to see that high traffic doesn't
+# hit a race condition or something.
+arras4benchmark --env=stb --duration=0 --stay-connected=0 --sessions=6 --repeat=100 --requestMb=2048 --cores=1 --prepend=/rel/test/prramsey/rez
+
+# fill up memory on the node system and see that oom resolves the issue
+arras4benchmark --env=stb --bandwidthPath=computation_to_client --bytes=1000000000 --credits=10000000 --duration=3000 --report-frequency=3000 --messageSleep=30000000 --repeat=2 --allowDisconnect --prepend=/rel/test/prramsey/rez --local-only
+
+# latency between client and computation
+# This currently appears to be broken
+arras4benchmark --env=stb --bandwidthPath=computation_to_client --bytes=1 --credits=1 --duration=60 --report-frequency=5  --prepend=/rel/test/prramsey/rez --local-only
+
+# latency between two computations
+arras4benchmark --env=uns --bandwidthPath=computations_to_computations --bytes=1 --credits=1 --duration=600 --report-frequency=5 --prepend=/usr/pic1/prramsey/rez --local-only
+
+# test an attempt at node to node connection when the far node is missing
+# kill node which benchcomp1 is running on after start but before 30 seconds is up
+arras4benchmark --env=uns --bandwidthPath=computation_to_computation --bytes=1 --session=benchmark_two_machine_test --delay-start=30 --prepend=/rel/test/prramsey/rez
+
+
+# test message from another node where session is done locally
+# run this and then kill the test after is it started
+arras4benchmark --env=uns --bandwidthPath=computation_to_computation --bytes=1 --credits=10000000 --duration=600 --report-frequency=5 --session=benchmark_two_machine_test --prepend=/rel/test/prramsey/rez
+
+# test a computation which is slow to shut down even when there is a SIGTERM
+arras4benchmark --env=local --requestMb=45000 --allocateMb=40000 --touchMb=40000 --thread=20 --session=benchmark_hangonstop --duration=30
+
+
+# cgroup test
+# without cgroups turned on it should be allowed to exceed it's memory reservation
+#  -try without --use-cgroups to see the memory going over without anything happening
+#  -try with --use-groups to see cgroups being created but with no limits
+#  -try with --use-cgroups and --enforce-memory to see the program killed when it exceeds its limits
+#  -try with --use-ccgroup --enforce-memory and --loan-memory to see the oom triggered but the program lives on with more memory
+#  -same as a but run a copy thay allocates memory forcing the loan to be recalled
+arras4benchmark --env=uns --local-only --requestMb=8192 --allocateMb=12000 --touchMb=12000
+# this forces a loan recall on my machine
+arras4benchmark --env=uns --local-only --requestMb=118000
+# try to use more processing power than allocated
+arras4benchmark --env=uns --local-only --cores=10 --threads=15

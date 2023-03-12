@@ -1,0 +1,23 @@
+Import('env')
+from os import path
+# extract library name from current/parent path
+# --------------------------------------------------------------------------
+name       = 'arras4_httpserver'
+sources    = env.DWAGlob('*.cc')
+incdir     = [str(env.Dir('../../..').srcnode())]
+components = 	[
+    'arras4_network',
+    'microhttp'
+		]
+# --------------------------------------------------------------------------
+env.DWAInstallInclude(env.DWAGlob('*.h'), 'httpserver')
+()
+env.DWAUseComponents(components)
+env.Append(CPPPATH=incdir)
+lib = env.DWASharedLibrary(name, sources)
+target = env.DWAInstallLib(lib)
+env.DWAComponent(name, LIBS=target, CPPPATH=incdir, COMPONENTS=components)
+env.DWAInstallSConscriptStub(
+    name, LIBS=target, CPPPATH=[env.Dir('$INSTALL_DIR/include')],
+    COMPONENTS=components)
+env.DWALinkValidate(name)

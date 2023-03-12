@@ -1,0 +1,27 @@
+{
+    "name": "session_bad_rez",
+    "description": "has an unresolvable rez setting",
+    "computations": {
+        "(client)": {
+            "messages": {
+                "testcomp": "*"
+            }
+        }, 
+        "testcomp": {
+            "dso": "libarras4_testcomputation.so", 
+            "entry": "yes", 
+            "forward":true,
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "moonray-4 moonray-3",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 16384
+                }
+            },
+            "messages": {
+                "(client)": "*" 
+            }
+        }
+    }
+}

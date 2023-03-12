@@ -1,0 +1,37 @@
+Import('env')
+from os import path
+
+# --------------------------------------------------------------------------
+name       = 'message_impl'
+sources    = env.DWAGlob('*.cc')
+incdir     = [str(env.Dir('..').srcnode())]
+components = [
+    'arras4_log',
+    'arras4_exceptions',
+    'message_api',
+    'arras4_network',
+    'jsoncpp'
+]
+# --------------------------------------------------------------------------
+
+publicHeaders = [
+    'Envelope.h',
+    'MessageEndpoint.h',
+    'MessageReader.h',
+    'MessageWriter.h',
+    'messaging_version.h',
+    'MetadataImpl.h',
+    'OpaqueContent.h',
+    'PeerMessageEndpoint.h',
+    'StreamImpl.h'
+]
+env.DWAInstallInclude(publicHeaders, 'message_impl')
+
+env.DWAUseComponents(components)
+lib = env.DWASharedLibrary(name, sources)
+target = env.DWAInstallLib(lib)
+env.DWAComponent(name, LIBS=target, CPPPATH=incdir, COMPONENTS=components)
+env.DWAInstallSConscriptStub(
+    name, LIBS=target, CPPPATH=[env.Dir('$INSTALL_DIR/include')],
+    COMPONENTS=components)
+env.DWALinkValidate(name)

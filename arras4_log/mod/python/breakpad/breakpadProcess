@@ -1,0 +1,186 @@
+#!/usr/local/bin/python
+# Copyright 2023 DreamWorks Animation LLC and Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+
+import sys
+import os
+import socket
+import smtplib
+if sys.version_info.major == 3:
+    # for python 3
+    import mimetypes
+    from email.message import EmailMessage
+else:
+    # defults to python 2
+    from email.MIMEMultipart import MIMEMultipart
+    from email.MIMEText import MIMEText
+from datetime import datetime
+
+
+# Generating Breakpad stack traces:
+# The script takes a minidump file and the /symbols directory, and runs 
+# Breakpad's minidump_stackwalk command on it to produce a stack trace, 
+# which is redirected and stored in stacktracePath (in studio/common/log). 
+# The stack trace is stored in the logs, and then emailed out with some
+# information about the crash.
+
+
+# USAGE: python breakpadProcess .dmp /symbols Application StackTracePath
+# sys.argv[0] = breakpadProcess
+# sys.argv[1] = minidump file path
+# sys.argv[2] = data/symbols directory
+# sys.argv[3] = Application that was running
+# sys.argv[4] = StackTracePath where the stack trace will be stored in /studio/common
+# sys.argv[5] = an Arras sessionId if applicable
+# sys.argv[6] = a computation name if applicable
+# sys.argv[7] = a computation dso name if applicable
+
+minidump = str(sys.argv[1]) # the .dmp file
+symbols = str(sys.argv[2])  # path to the appropriate data/symbols directory
+application = str(sys.argv[3]) # the folio they are running
+stacktracePath = str(sys.argv[4]) # where we will store the stack trace in /studio/common/log
+
+sessionId = "None"
+if len(sys.argv) >= 6:
+    sessionId = str(sys.argv[5])
+
+compName = "None"
+if len(sys.argv) >= 7:
+    compName = str(sys.argv[6])
+
+dsoName = "None"
+if len(sys.argv) >= 8:
+    dsoName = str(sys.argv[7])
+
+# add to symbols from REZ 
+symbols += " "
+for key in os.environ.keys():
+    if key.startswith("REZ_") and key.endswith("_ROOT"):
+        dir = os.environ[key] + "/data/symbols"
+        if os.path.isdir(dir):
+            symbols += dir + " "
+
+# add in a final catch all symbols directory where we can put additional symbol files
+symbols += " /work/pe/jose/arras/breakpad/symbols"
+
+# env USER is set by node service when launching the execComp
+username = os.environ.get("USER")
+if not username:
+    username = "unknown-user"
+
+# get hostname
+hostname = socket.gethostname()
+
+# First write sessionId, compName, dsoName to the stack trace file
+idStr = ""
+if sessionId != "None":
+    idStr = "sessionId: " + sessionId + "\n"
+if compName != "None":
+    idStr += "compName: " + compName + "\n"
+if dsoName != "None":
+    idStr += "dso: " + dsoName + "\n"
+fp = open(stacktracePath, "w")
+fp.write(idStr)
+fp.close()
+
+# Then write the date to the stack trace file
+os.system("date >> " + stacktracePath)
+
+# Finally, run a stackwalk on the minidump file and the data/symbols directory, placing the output into stacktracePath
+command = "(/rel/third_party/breakpad/1458/src/processor/minidump_stackwalk " + minidump + " " + symbols + " >> " + stacktracePath + ") >& /dev/null"
+os.system(command)
+
+# add a header for package list
+fp = open(stacktracePath,"a+")
+fp.write("\n------------------\nPACKAGES\n------------------\n")
+fp.close()
+
+#
+# /rel/folio packages
+#
+# get a list of the executable libraries in /rel/folio
+command = "( /bin/strings " + minidump + " | grep 'r-xp' | grep '/rel/folio' | awk '{ print $6 }' "
+# extract the folio roots
+command = command + " | awk -F / '{ print \"/\" $2 \"/\" $3 \"/\" $4 \"/\" $5 }' "
+# remove the duplicates
+command = command + " | sort | uniq"
+# append stdout it to the stacktrace file
+command = command + " >> " + stacktracePath + " )"
+# throw away stderr
+command = command + " >& /dev/null"
+print("command is {}".format(command))
+os.system(command)
+
+#
+# /rel/depot/third_party_build and /rel/rez/dwa packages
+#
+# get a list of the executable libraries in /rel/depot
+command = "( /bin/strings " + minidump + " | grep 'r-xp' | grep '/rel/depot/third_party_build\|/rel/rez/dwa' | awk '{ print $6 }' "
+# extract the folio roots
+command = command + " | awk -F / '{ print \"/\" $2 \"/\" $3 \"/\" $4 \"/\" $5 \"/\" $6 }' "
+# remove the duplicates
+command = command + " | sort | uniq"
+# append stdout it to the stacktrace file
+command = command + " >> " + stacktracePath + " )"
+# throw away stderr
+command = command + " >& /dev/null"
+print("command is {}".format(command))
+os.system(command)
+
+emailBody = ("Application: %s"
+             "\nWorking directory: %s"
+             "\nUser: %s"
+             "\nHostname: %s"
+             "\nDate and time: %s") % \
+             (application,
+              os.getcwd(),
+              username,
+              hostname,
+              datetime.now().ctime())
+if idStr != "":
+    emailBody += "\n" + idStr
+
+emailFrom = username
+emailTo = "arras-crash-report@dreamworks.com"
+subject = "Crash report from %s" % hostname
+if compName != "None":
+   subject += " for computation: " + compName;
+
+if sys.version_info.major == 3:
+    msg = EmailMessage()
+else:
+    msg = MIMEMultipart()
+
+msg["Subject"] = subject
+msg["From"] = emailFrom
+msg["To"] = emailTo
+
+filename = stacktracePath
+
+
+if sys.version_info.major == 3:
+    msg.set_content(emailBody)
+    with open(filename, 'r') as fp:
+        msg.add_attachment(fp.read(), filename=filename)
+else:
+    body = MIMEMultipart('alternative')
+    body.attach(MIMEText(emailBody)) 
+    msg.attach(body)  
+    f = file(filename)
+    attachment = MIMEText(f.read())
+    attachment.add_header("Content-Disposition","attachment",filename=filename)
+    msg.attach(attachment)
+
+# Connect to the mailer and sent the message.
+server = smtplib.SMTP('localhost')
+if sys.version_info.major == 3:
+    # for python3.9 smtplib takes a list of emailTo
+    server.sendmail(emailFrom, [emailTo], msg.as_string())
+else:
+    server.sendmail(emailFrom, emailTo, msg.as_string())
+server.quit()
+
+print("Stacktrace sent to breakpad mailing list ({}). Stored at: {}".format(emailTo, stacktracePath))
+
+
+

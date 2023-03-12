@@ -1,0 +1,27 @@
+{
+    "name": "reply_test",
+    "description": "computation replies to client",
+    "computations": {
+        "(client)": {
+            "messages": {
+                "testcomp": "*"
+            }
+        }, 
+        "testcomp": {
+            "dso": "libtestcomputation.so", 
+            "entry": "yes", 
+            "reply":true,
+            "requirements": {
+                "computationAPI": "4.x",
+                "packaging_system": "current-environment",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 16384
+                }
+            },
+            "messages": {
+                "(client)": "*" 
+            }
+        }
+    }
+}

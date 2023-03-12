@@ -1,0 +1,27 @@
+{
+    "name": "time_example",
+    "description": "computation send the time on the arras server back to the client",
+    "computations": {
+        "(client)": {
+            "messages": {
+                "time_example_comp": "*"
+            }
+        }, 
+        "time_example_comp": {
+            "dso": "libtime_example_computation.so", 
+            "entry": "yes", 
+            "forward":true,
+            "requirements": {
+                "computationAPI": "4.x",
+                "rez_packages": "arras4_test-4",
+                "resources": {
+                    "cores": 1.0,
+                    "memoryMB": 16384
+                }
+            },
+            "messages": {
+                "(client)": "*" 
+            }
+        }
+    }
+}

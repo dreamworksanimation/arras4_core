@@ -1,0 +1,23 @@
+Import('env')
+from os import path
+
+# --------------------------------------------------------------------------
+name       = 'time_example_message'
+sources    = env.DWAGlob('*.cc')
+incdir     = [str(env.Dir('..').srcnode())]
+components = [
+            'message_api',
+            'arras4_log',
+            'openssl'
+]
+# --------------------------------------------------------------------------
+publicHeaders = [
+    'TimeExampleMessage.h'
+]
+env.DWAInstallInclude(publicHeaders, 'messages/time_example_message')
+
+env.DWAUseComponents(components)
+lib = env.DWASharedLibrary(name, sources)
+target = env.DWAInstallLib(lib)
+env.DWAComponent(name, LIBS=target, CPPPATH=incdir, COMPONENTS=components)
+env.DWALinkValidate(name)

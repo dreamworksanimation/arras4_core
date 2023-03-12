@@ -1,0 +1,15 @@
+{
+  "clientDisconnectReason": "kicked",
+  "clientStatus": "connected",
+  "computations": [
+    {
+      "compStatus": "",
+      "execStatus": "stopped",
+      "name": "bad_guy",
+      "signal": "not set",
+      "stoppedReason": "terminated with exit code 127"
+    }
+  ],
+  "execStatus": "stopped",
+  "execStoppedReason": "compExited bad_guy terminated with exit code 127",
+}

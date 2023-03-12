@@ -1,0 +1,14 @@
+# Copyright 2023 DreamWorks Animation LLC and Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+
+arrase_core was created by merging code from multiple repos. These are the commit ids 
+in each source repo, corresponding to the initial commit in arras4_core
+
+arras4_client dde5903360860feb47eb936d0d3a7fa629987a3e
+arras4_computation_api 6d54638b7311a84376cb0a371cc1044dd13dcca9
+arras4_core_impl cbff8d2864a7972ec7f7f1cde807f086d3c9bfb2
+arras4_log d4de2242a5887aa4aebcf58409a39e89f39fdb34
+arras4_message_api 7b60a61f3bdba6a0442a95d94a71367a1b92e0a8
+arras4_network 284de224628ddae28f3077d0330e585cebd2b16e
+arras4_test ba0316d394cc334c8a62393b4366a6686eede1d5
+

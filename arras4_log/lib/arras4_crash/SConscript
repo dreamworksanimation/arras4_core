@@ -1,0 +1,54 @@
+Import('env')
+from os import path
+
+# extract library name from current/parent path
+modName = path.basename(path.abspath('..'))
+libName = path.basename(path.abspath('.'))
+
+# --------------------------------------------------------------------------
+name       = 'arras4_crash'
+sources    = [env.DWAGlob('*.cc')]
+incdir     = [str(env.Dir('.').srcnode())]
+components = [
+                'boost_headers',
+                'boost_system_mt',
+                'boost_filesystem_mt',
+                'breakpad',
+             ]
+             
+# --------------------------------------------------------------------------
+#env.AppendUnique(CPPDEFINES=[('LIB_NAME', '\'\"%s\"\'' % name)])
+
+()
+
+env.DWAUseComponents(components)
+env.DWAInstallInclude(env.DWAGlob('*.h'), 'arras4_crash')
+env.Append(CPPPATH=incdir)
+libs = env.DWASharedLibrary(name, sources)
+target = env.DWAInstallLib(libs)
+
+cxxflags = []
+if "gcc" in env['COMPILER_LABEL']:
+   # for breakpad with gcc we still need GNU extension for 'typeof'
+   if '-std=c++14' in env['CXXFLAGS']:
+      cxxflags.append('-std=gnu++14')
+      env.Append(CXXFLAGS = cxxflags)
+   elif '-std=c++17' in env['CXXFLAGS']:
+      cxxflags.append('-std=gnu++17')
+      env.Append(CXXFLAGS = cxxflags)
+   else:
+      cxxflags.append('-std=gnu++11') # defaults to this one
+      env.Append(CXXFLAGS = cxxflags)
+
+env.DWAComponent(name, 
+                 LIBS = target, 
+                 CPPPATH = incdir, 
+                 CXXFLAGS = cxxflags,
+                 COMPONENTS=components)
+env.DWAInstallSConscriptStub(
+    name, LIBS=target, CPPPATH=[env.Dir('$INSTALL_DIR/include')],
+    CXXFLAGS=cxxflags, COMPONENTS=components)
+
+env.DWALinkValidate(name)
+
+

@@ -1,0 +1,57 @@
+Import('env')
+from os import environ
+
+# ------------------------------------------
+name       = 'execComp'
+sources    = env.DWAGlob('*.cc')
+components =    [
+            'arras4_crash',
+            'arras4_network',
+            'message_api',
+            'computation_api',
+            'message_impl',
+            'computation_impl',
+            'shared_impl',
+            'routing',
+            'arras4_exceptions',
+            'arras4_log',
+            'arras4_athena',
+            'boost_program_options_mt',
+            'boost_system_mt',
+            'breakpad'
+         ]
+
+# required by breakpad
+if "gcc" in env['COMPILER_LABEL']:
+   # for gcc we still need GNU extension for 'typeof'
+   if '-std=c++14' in env['CXXFLAGS']:
+      env['CXXFLAGS'].append('-std=gnu++14')
+   elif '-std=c++17' in env['CXXFLAGS']:
+      env['CXXFLAGS'].append('-std=gnu++17')
+   else:
+      env['CXXFLAGS'].append('-std=gnu++11') # defaults to this one
+
+
+
+# ------------------------------------------
+
+if "icc" in env['COMPILER_LABEL']:
+    env['CXXFLAGS'].append('-wd1782') # #pragma once is not deprecated.
+
+()
+env.DWAUseComponents(components)
+
+env.AppendUnique(LIBS = ['rt'])
+if "icc" in env['COMPILER_LABEL']:
+    # Force linking against OpenMP to pull link of static thread locals into process launch
+    env.AppendUnique(LIBS = ['iomp5'])
+else:
+    env.AppendUnique(LIBS = ['dl'])
+    
+# need to link with libatomic
+if int(environ['REZ_GCC_MAJOR_VERSION']) >= 9:
+    env.AppendUnique(LIBS = ['atomic'])
+
+binName = name 
+prog = env.DWAProgram(binName, sources)
+env.DWAInstallBin(prog)
