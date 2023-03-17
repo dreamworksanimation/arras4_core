@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #ifndef __ARRAS4_SHUTDOWN_EXCEPTION_H__
-#define __ARRAS4_INTERNAL_EXCEPTION_H__
+#define __ARRAS4_SHUTDOWN_EXCEPTION_H__
 
 #include <exception>
 #include <stddef.h>

@@ -232,7 +232,7 @@ getSessions(
                 // most of the node information is redundant
                 const Json::Value computations = assignmentJson["config"]["computations"];
                 for (Json::Value::iterator iter = computations.begin(); iter != computations.end(); ++iter) {
-                    const Json::ValueIterator::reference computationJson = *iter;
+                    Json::ValueIterator::reference computationJson = *iter;
                     Computation computation;
                     computation.mId = iter.key().asString();
                     if (computation.mId == "(client)") continue;
