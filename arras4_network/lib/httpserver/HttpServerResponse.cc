@@ -4,7 +4,6 @@
 #include "HttpServerResponse.h"
 #include "HttpServerException.h"
 
-#include <microhttpd.h>
 #include <cstring>
 
 #define HTTP_CONTENT_TYPE "Content-Type"
@@ -31,7 +30,7 @@ HttpServerResponse::write(const std::string& aStringData)
 }
 
 
-int
+MHD_Result
 HttpServerResponse::queue()
 {
     struct MHD_Response* response = nullptr;

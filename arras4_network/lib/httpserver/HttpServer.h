@@ -10,8 +10,7 @@
 #include <string>
 #include <thread>
 
-struct MHD_Daemon;
-struct MHD_Connection;
+#include <microhttpd.h>
 
 namespace arras4 {
     namespace network {
@@ -37,7 +36,7 @@ namespace arras4 {
 
             // internal-use only
             void _prepare(HttpServerRequest&, struct MHD_Connection*);
-            int _complete(HttpServerResponse&);
+            MHD_Result _complete(HttpServerResponse&);
 
         private:
             MHD_Daemon* mDaemon;
