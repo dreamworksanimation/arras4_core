@@ -97,7 +97,7 @@ bool rezResolve(impl::ProcessManager& procMan,
     api::ObjectRef comps = obj["computations"];
     for (api::ObjectIterator cIt = comps.begin();
          cIt != comps.end(); ++cIt) {
-	std::string name = cIt.memberName();
+	std::string name = cIt.name();
 	api::ObjectRef cdef = *cIt;
 	if (cdef.isObject()) {
             if (cdef.isMember("requirements")) {

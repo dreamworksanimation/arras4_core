@@ -61,7 +61,7 @@ int ExecComp::run()
             return ProcessExitCodes::INVALID_CONFIG_DATA;
         }
         api::ObjectIterator oIt = mConfig["config"].begin();
-        std::string computationName = oIt.memberName(); // Json DEPRECATED
+        std::string computationName = oIt.name();
         api::ObjectRef computationConfig = *oIt;
 
         // save config if requested

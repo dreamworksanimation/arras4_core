@@ -115,7 +115,7 @@ void LocalSession::setDefinition(api::ObjectConstRef def)
     api::ObjectConstRef contexts = def["contexts"];
     for (api::ObjectConstIterator cIt = comps.begin();
          cIt != comps.end(); ++cIt) {
-	std::string name = cIt.memberName();
+	std::string name = cIt.name();
 	if (name != "(client)") {
 	    processComputation(name,*cIt,contexts);
 	}	    

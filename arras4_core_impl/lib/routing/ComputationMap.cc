@@ -18,8 +18,8 @@ ComputationMap::ComputationMap(const api::UUID& sessionId,
     for (api::ObjectConstIterator compIt = computationsData.begin();
          compIt != computationsData.end(); ++compIt) {
         api::UUID compId((*compIt)["compId"].asString());
-        mCompNameToId[compIt.memberName()] = compId;   // memberName() is DEPRECATED in later jsoncpp versions,
-        mCompIdToName[compId] = compIt.memberName();   // -- switch to 'name()' when possible
+        mCompNameToId[compIt.name()] = compId;
+        mCompIdToName[compId] = compIt.name();
 
         api::Address addr;
         addr.computation = compId;
