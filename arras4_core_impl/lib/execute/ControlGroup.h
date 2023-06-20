@@ -4,7 +4,11 @@
 #ifndef __COMPUTATION_GROUP_H__
 #define __COMPUTATION_GROUP_H__
 
+#ifdef ARRAS_ENABLE_CGROUP
 #include <libcgroup.h>
+#else
+#include "cgroup_stubs.h"
+#endif
 #include <map>
 #include <mutex>
 #include <string>   // for std::string

@@ -5,6 +5,7 @@
 #define __ARRAS4_HTTPSERVERRESPONSE_H__
 
 #include "httpserver_types.h"
+#include <microhttpd.h>
 
 struct MHD_Connection;
 
@@ -46,7 +47,7 @@ private:
     std::string mText;
     ServerResponseCode mCode;
 
-    int queue();
+    MHD_Result queue();
 };
 
 }

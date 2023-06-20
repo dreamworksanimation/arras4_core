@@ -1,5 +1,5 @@
 Import('env')
-from os import path
+import os
 
 # --------------------------------------------------------------------------
 name       = 'execute'
@@ -28,7 +28,9 @@ publicHeaders = [
 
 env.DWAInstallInclude(publicHeaders, 'execute')
 
-env.AppendUnique(LIBS = ['cgroup'])
+if os.path.isfile('/usr/lib64/libcgroup.so'):
+    env.AppendUnique(LIBS = ['cgroup'])
+    env.AppendUnique(CPPDEFINES=['ARRAS_ENABLE_CGROUP'])
 
 env.DWAUseComponents(components)
 lib = env.DWASharedLibrary(name, sources)

@@ -31,7 +31,7 @@ HttpServerResponse::write(const std::string& aStringData)
 }
 
 
-int
+MHD_Result
 HttpServerResponse::queue()
 {
     struct MHD_Response* response = nullptr;

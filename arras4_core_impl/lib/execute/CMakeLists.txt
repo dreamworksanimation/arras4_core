@@ -48,8 +48,12 @@ target_link_libraries(${LibName}
         ${PROJECT_NAME}::chunking
         ${PROJECT_NAME}::core_messages
         ${PROJECT_NAME}::network
-        cgroup
 )
+
+if(EXISTS /usr/lib64/libcgroup.so)
+    target_link_libraries(${LibName} PUBLIC cgroup)
+    target_compile_definitions(${LibName} PRIVATE ARRAS_ENABLE_CGROUP)
+endif()
 
 target_include_directories(${LibName}
     PUBLIC
