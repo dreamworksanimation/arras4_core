@@ -7,6 +7,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <queue>
+#include <string>
 
 namespace arras4 {
     namespace impl {
