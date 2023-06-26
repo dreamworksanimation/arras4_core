@@ -6,7 +6,7 @@
 
 #include "httpserver_types.h"
 
-struct MHD_Connection;
+#include <microhttpd.h>
 
 namespace arras4 {
     namespace network {

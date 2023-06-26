@@ -16,10 +16,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-// microhttpd docs recomend including this after basic types
-// have been defined
-#include <microhttpd.h>
-
 #define HTTP_CONTENT_TYPE "Content-Type"
 
 namespace {
@@ -56,13 +52,13 @@ ResponseState::ResponseState(struct MHD_Connection* aConnection, const char* aUr
 {
 }
 
-int
+MHD_Result
 handleError(struct MHD_Connection* aConnection,
             unsigned int statusCode,
             const std::string& responseMsg,
             enum MHD_ResponseMemoryMode mode)
 {
-    int rtn = MHD_NO;
+    MHD_Result rtn = MHD_NO;
     struct MHD_Response* resp = MHD_create_response_from_buffer(responseMsg.size() + 1,
                                                                 const_cast<char*>(responseMsg.c_str()),
                                                                 mode);
@@ -73,7 +69,7 @@ handleError(struct MHD_Connection* aConnection,
     return rtn;
 }
 
-int
+MHD_Result
 dispatch(
     void* aData,
     struct MHD_Connection* aConnection,
@@ -116,7 +112,7 @@ dispatch(
         return MHD_YES;
     }
 
-    int rtn = MHD_NO;
+    MHD_Result rtn = MHD_NO;
     try {        
         HttpServer* server = static_cast<HttpServer*>(aData);
         ResponseState* state = static_cast<ResponseState*>(*aPtr);
@@ -393,12 +389,12 @@ HttpServer::~HttpServer()
     if (mDaemon) MHD_stop_daemon(mDaemon);
 }
 
-int
+MHD_Result
 HttpServer::_complete(HttpServerResponse& aResp) {
     return aResp.queue();
 }
 
-static int
+static MHD_Result
 key_value_iterator(void* aCls, enum MHD_ValueKind aKind, const char* aKey, const char* aVal)
 {
 
