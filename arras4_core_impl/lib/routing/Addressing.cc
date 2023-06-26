@@ -49,8 +49,7 @@ Addressing::Addressing(const api::UUID& sourceCompId,
     // this list.
     for (api::ObjectConstIterator destIt = filters.begin();
          destIt != filters.end(); ++destIt) {
-        std::string destName = destIt.memberName(); // memberName() is DEPRECATED in later jsoncpp versions,
-                                                    // -- switch to 'name()' when possible
+        std::string destName = destIt.name();
         const api::Address& destAddr = compMap.getComputationAddress(destName);
         std::unordered_set<std::string> ignoreSet;
         

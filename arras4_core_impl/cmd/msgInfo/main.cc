@@ -69,7 +69,7 @@ void readMessageHeader(const std::string& filepath,
     // add additional non-metadata info 
     obj["_classId"] = classId.toString();
     obj["_version"] = version;
-    obj["_serialSize"] = size;
+    obj["_serialSize"] = (Json::Int64) size;
 }
 
 void showInfo(const std::string& filepath,bool full, const std::string& prefix="")

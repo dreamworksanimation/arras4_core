@@ -372,7 +372,7 @@ LogClient::objectToLogRecords(std::unique_ptr<api::Object> obj)
             if (content.isArray()) {
 
                 // For each object in the array make a log record
-                for (Json::Value::iterator i = content.begin(); i != content.end(); ++i) {
+                for (Json::Value::const_iterator i = content.begin(); i != content.end(); ++i) {
 
                     const api::Object& item = *i;
                     if (objectIsLogRecord(item)) {

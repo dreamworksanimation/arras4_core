@@ -47,7 +47,7 @@ void Environment::setFrom(api::ObjectConstRef obj)
 {
     for (api::ObjectConstIterator it = obj.begin();
          it != obj.end(); ++it) {
-	set(it.memberName(),(*it).asString());
+	set(it.name(),(*it).asString());
     }
 }
 

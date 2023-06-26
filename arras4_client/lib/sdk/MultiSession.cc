@@ -217,7 +217,7 @@ MultiImpl::processCreateResponse(const HttpResponse& resp)
         // we asked to create
         for (ObjectIterator sessIt = responseObject.begin();
              sessIt != responseObject.end(); ++sessIt) {
-            std::string key = sessIt.memberName();
+            std::string key = sessIt.name();
             SDK& sdk = getSession(key);
             try {
                 sdk.mImpl->connectSession(*sessIt);
