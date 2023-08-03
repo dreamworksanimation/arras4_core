@@ -6,6 +6,10 @@
 
 #include <execute/RezContext.h>
 
+#if defined(JSONCPP_VERSION_MAJOR)
+#define memberName name
+#endif
+
 namespace {
     const char* DEFAULT_PACKAGING = "rez1";
 

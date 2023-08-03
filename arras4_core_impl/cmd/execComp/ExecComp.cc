@@ -22,6 +22,10 @@
 
 #include <fstream>
 
+#if defined(JSONCPP_VERSION_MAJOR)
+#define memberName name
+#endif
+
 using namespace arras4::log;
 using namespace arras4::api;
 

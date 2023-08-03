@@ -17,6 +17,10 @@
 #include <sdk/sdk.h>
 #include <thread>
 
+#if defined(JSONCPP_VERSION_MAJOR)
+#define memberName name
+#endif
+
 namespace bpo = boost::program_options;
 using namespace arras4::test;
 
@@ -117,18 +121,18 @@ subset(const Json::Value& aSubset, const Json::Value& aSuperset,
       case Json::objectValue:
         {
             unsigned int index = 0;
-            Json::ValueIterator iter = aSubset.begin();
+            Json::ValueConstIterator iter = aSubset.begin();
             while (iter != aSubset.end()) {
-                const char* memberName = iter.memberName();
-                std::string name = aVarName + "." + iter.memberName();
-                Json::Value value = aSuperset[memberName];
+                std::string member_name(iter.memberName());
+                std::string full_name = aVarName + "." + iter.memberName();
+                Json::Value value = aSuperset[member_name.c_str()];
                 if (value.isNull()) {
                     if (aPrintError) {
-                        ARRAS_LOG_ERROR("Superset is missing %s", name.c_str());
+                        ARRAS_LOG_ERROR("Superset is missing %s", full_name.c_str());
                         return false;
                     }
                 }
-                if (!subset(*iter, value, name, aPrintError)) return false;
+                if (!subset(*iter, value, full_name, aPrintError)) return false;
                 ++iter;
             }
             return true;

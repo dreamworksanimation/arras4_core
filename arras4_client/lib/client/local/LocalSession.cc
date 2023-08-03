@@ -22,6 +22,10 @@
 #include <fstream>
 #include <signal.h>
 
+#if defined(JSONCPP_VERSION_MAJOR)
+#define memberName name
+#endif
+
 namespace {
     const unsigned DEFAULT_MEMORY_MB = 2048;
     const unsigned RESERVED_CORES = 1;

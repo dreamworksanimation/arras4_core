@@ -74,7 +74,7 @@ def requires():
         'uuid-1.0.0',
         'boost',
         'curl_no_ldap-7.49.1.x.2',
-        'jsoncpp-0.6.0',
+        'jsoncpp-1.9.5.x',
         'libmicrohttpd-0.9.71.x.1',
         'breakpad-1499'
     ]

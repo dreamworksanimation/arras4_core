@@ -22,6 +22,10 @@
 #include <thread>
 #include <utility>
 
+#if defined(JSONCPP_VERSION_MAJOR)
+#define memberName name
+#endif
+
 using namespace arras4::api;
 using namespace arras4::network;
 using namespace arras4::impl;

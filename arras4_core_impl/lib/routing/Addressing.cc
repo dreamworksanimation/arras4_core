@@ -11,6 +11,10 @@
 #include <unordered_set>
 #include <algorithm>
 
+#if defined(JSONCPP_VERSION_MAJOR)
+#define memberName name
+#endif
+
 // Note: some improvements can be made in this code if
 // we switch to a newer version of jsoncpp
 namespace arras4 {

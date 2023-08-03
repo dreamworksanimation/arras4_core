@@ -54,7 +54,7 @@ void readMessageHeader(const std::string& filepath,
         std::cerr << "failed to stat file " << filepath << std::endl;
         return;
     }
-    long long size = stat_buf.st_size; // Json::Int64 = long long
+    Json::Value size { static_cast<Json::Int64>(stat_buf.st_size) }; // Json::Int64 = long long
 
     FileDataSource fds(filepath); 
  
