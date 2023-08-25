@@ -231,8 +231,8 @@ getSessions(
                 std::string nodeId = assignmentJson["nodeId"].asString();
                 // most of the node information is redundant
                 const Json::Value computations = assignmentJson["config"]["computations"];
-                for (Json::Value::iterator iter = computations.begin(); iter != computations.end(); ++iter) {
-                    Json::ValueIterator::reference computationJson = *iter;
+                for (Json::Value::const_iterator iter = computations.begin(); iter != computations.end(); ++iter) {
+                    Json::ValueConstIterator::reference computationJson = *iter;
                     Computation computation;
                     computation.mId = iter.key().asString();
                     if (computation.mId == "(client)") continue;

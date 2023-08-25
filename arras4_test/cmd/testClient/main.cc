@@ -117,10 +117,10 @@ subset(const Json::Value& aSubset, const Json::Value& aSuperset,
       case Json::objectValue:
         {
             unsigned int index = 0;
-            Json::ValueIterator iter = aSubset.begin();
+            Json::ValueConstIterator iter = aSubset.begin();
             while (iter != aSubset.end()) {
-                const char* memberName = iter.memberName();
-                std::string name = aVarName + "." + iter.memberName();
+                const std::string memberName = iter.name();
+                std::string name = aVarName + "." + memberName;
                 Json::Value value = aSuperset[memberName];
                 if (value.isNull()) {
                     if (aPrintError) {
