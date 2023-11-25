@@ -60,6 +60,17 @@ target_include_directories(${LibName}
         $<BUILD_INTERFACE:${BuildIncludeDir}>
         $<INSTALL_INTERFACE:include>)
 
+find_path(LIBCGROUP_INCLUDE_DIR
+    NAMES libcgroup.h
+)
+
+find_library(LIBCGROUP_LIBRARY
+    NAMES cgroup
+)
+
+target_include_directories(${LibName} PRIVATE ${LIBCGROUP_INCLUDE_DIR})
+target_link_libraries(${LibName} PRIVATE ${LIBCGROUP_LIBRARY})
+
 # If at Dreamworks add a SConscript stub file so others can use this library.
 SConscript_Stub(${LibName})
 
