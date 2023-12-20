@@ -274,4 +274,3 @@ private:
 } // end namespace arras
 
 #endif /* __ARRAS4_CLIENT_LOGCLIENT_H_ */
-

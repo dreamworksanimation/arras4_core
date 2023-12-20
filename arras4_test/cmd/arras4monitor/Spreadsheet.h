@@ -75,11 +75,12 @@ class Spreadsheet {
         mWidths.clear();
         for (auto c = 0; c < mColumns; c++) {
             int width = 0;
-            for (auto r = 0; r < mRows.size(); r++ ) {
+            for (auto r = 0u; r < mRows.size(); r++ ) {
                 // ignore unformatted rows for cell width
                 if (mRows[r].isUnformatted()) continue;
 
-                if (mRows[r][c].length() > width) width = mRows[r][c].length();
+                if (static_cast<int>(mRows[r][c].length()) > width) {
+                    width = static_cast<int>( mRows[r][c].length());
             }
             mWidths.push_back(width);
         }
@@ -95,7 +96,7 @@ class Spreadsheet {
         mAlignment[index] = alignment;
     }
 
-    int rows() { return mRows.size(); }
+    int rows() { return static_cast<int>(mRows.size()); }
     int columns() { return mColumns; };
 
   private:

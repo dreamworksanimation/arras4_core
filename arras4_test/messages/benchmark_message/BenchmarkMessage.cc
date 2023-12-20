@@ -34,7 +34,7 @@ BenchmarkMessage::BenchmarkMessage() : mType(MessageType::NOOP)
 }
 
 BenchmarkMessage::BenchmarkMessage(MessageType type, const std::string& value, const std::string& from) :
-    mType(type), mValue(value), mFrom(from)
+    mType(type), mFrom(from), mValue(value)
 {
 }
 

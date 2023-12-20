@@ -20,6 +20,11 @@
 #include <sdk/sdk.h>
 #include <sstream>
 
+#if defined(JSONCPP_VERSION_MAJOR) // Early version of jsoncpp don't define this.
+// Newer versions of jsoncpp renamed the memberName method to name.
+#define memberName name
+#endif
+
 // options for describing that the message should be sent
 // as "For_benchcomp0" to allow it to go to only the one computation
 arras4::api::Object computationoptions[16];
@@ -403,7 +408,7 @@ subset(const Json::Value& aSubset, const Json::Value& aSuperset,
                     return false;
                 }
             }
-            for (auto i = 0; i < size; i++) {
+            for (auto i = 0u; i < size; i++) {
 
                 // find a match in the array (assuming order doesn't matter)
                 unsigned int j;
@@ -434,12 +439,10 @@ subset(const Json::Value& aSubset, const Json::Value& aSuperset,
         break;
       case Json::objectValue:
         {
-            unsigned int index = 0;
-            Json::ValueIterator iter = aSubset.begin();
+            auto iter = aSubset.begin();
             while (iter != aSubset.end()) {
-                const char* memberName = iter.memberName();
                 std::string name = aVarName + "." + iter.memberName();
-                Json::Value value = aSuperset[memberName];
+                Json::Value value = aSuperset[iter.memberName()];
                 if (value.isNull()) {
                     if (aPrintError) {
                         ARRAS_LOG_ERROR("Superset is missing %s", name.c_str());
@@ -504,17 +507,19 @@ std::string bandwidth_report(
     unsigned long data)
 {
     std::ostringstream reportOut;
+    const float fmessages = static_cast<float>(messages);
+    const float fdata = static_cast<float>(data);
 
     reportOut << "Time: ";
     reportOut << std::fixed << std::setprecision(2) << seconds;
     reportOut << "s Msgs: ";
     reportOut << messages;
     reportOut << " Rate: ";
-    reportOut << std::fixed << std::setprecision(2) << (messages / seconds);
+    reportOut << std::fixed << std::setprecision(2) << (fmessages / seconds);
     reportOut << "msg/s (";
-    reportOut << std::fixed << std::setprecision(2) << 1.0/(messages / seconds)*1000000.0;
+    reportOut << std::fixed << std::setprecision(2) << 1.0f/(fmessages / seconds)*1000000.0f;
     reportOut << "µs) ";
-    reportOut << std::fixed << std::setprecision(2) << (data / 1048576.0 / seconds);
+    reportOut << std::fixed << std::setprecision(2) << (fdata / 1048576.0f / seconds);
     reportOut << "MB/s";
 
     return reportOut.str();
@@ -594,7 +599,8 @@ bool runSession(SessionInstance& session)
         unsigned long sentMessages(0);
         session.credit.set(credits);
         while (1) {
-            sendBenchmarkMessage(session, BenchmarkMessage::MessageType::SEND_ACK, 0, "", dataSize);
+            sendBenchmarkMessage(session, BenchmarkMessage::MessageType::SEND_ACK, 0,
+                                 "", static_cast<unsigned int>(dataSize));
             session.credit.waitAndDecrement();
 
             sentMessages++;
@@ -608,13 +614,13 @@ bool runSession(SessionInstance& session)
                 lastReport = currentTime;
 
                 std::chrono::duration<double, std::micro> elapsedDuration = deltaTime;
-                double elapsedSeconds = elapsedDuration.count() / 1000000.0;
+                float elapsedSeconds = elapsedDuration.count() / 1000000.0f;
                 std::string report = bandwidth_report(elapsedSeconds, deltaMessages, deltaMessages * dataSize);
                 report += " TOTALS: ";
 
                 auto elapsedTime = currentTime - startTime;
                 elapsedDuration = elapsedTime;
-                elapsedSeconds = elapsedDuration.count() / 1000000.0;
+                elapsedSeconds = elapsedDuration.count() / 1000000.0f;
                 report += bandwidth_report(elapsedSeconds, currentMessages, currentMessages * dataSize);
                 std::cout << report << "\n";
 
@@ -648,13 +654,13 @@ bool runSession(SessionInstance& session)
                 lastReport = currentTime;
 
                 std::chrono::duration<double, std::micro> elapsedDuration = deltaTime;
-                double elapsedSeconds = elapsedDuration.count() / 1000000.0;
+                float elapsedSeconds = elapsedDuration.count() / 1000000.0f;
                 std::string report = bandwidth_report(elapsedSeconds, deltaMessages, deltaMessages * dataSize);
                 report += " TOTALS: ";
 
                 auto elapsedTime = currentTime - startTime;
                 elapsedDuration = elapsedTime;
-                elapsedSeconds = elapsedDuration.count() / 1000000.0;
+                elapsedSeconds = elapsedDuration.count() / 1000000.0f;
                 report += bandwidth_report(elapsedSeconds, currentMessages, currentMessages * dataSize);
                 std::cout << report << "\n";
 
@@ -674,7 +680,7 @@ bool runSession(SessionInstance& session)
         sendBenchmarkMessage(session, BenchmarkMessage::MessageType::START_STREAM_OUT, 0, parameters);
         int remaining = duration;
         while (remaining > 0) {
-            int sleepTime = remaining;
+            unsigned int sleepTime = remaining;
             if (sleepTime > reportFrequency) sleepTime = reportFrequency;
             sleep(sleepTime);
             sendBenchmarkMessage(session, BenchmarkMessage::MessageType::SEND_REPORT, 0);
@@ -700,7 +706,7 @@ bool runSession(SessionInstance& session)
 
         int remaining = duration;
         while (remaining > 0) {
-            int sleepTime = remaining;
+            unsigned int sleepTime = remaining;
             if (sleepTime > reportFrequency) sleepTime = reportFrequency;
             sleep(sleepTime);
             for (auto i = 0; i < computations; i++) {
@@ -904,7 +910,7 @@ main(int argc, char* argv[])
     }
 
     sessions = new SessionInstance[parallelism];
-    for (auto i = 0; i < parallelism; i++) {
+    for (auto i = 0u; i < parallelism; i++) {
         sessions[i].mInstanceIndex = i;
         sessions[i].pSdk = std::make_shared<arras4::sdk::SDK>();
         initChunking(*sessions[i].pSdk, cmdOpts);
@@ -918,14 +924,14 @@ main(int argc, char* argv[])
     if (parallelism == 1) {
         sessionThread(0, repeat, ignoreErrors);
     } else {
-        for (auto i = 0; i < parallelism; i++) {
+        for (auto i = 0u; i < parallelism; i++) {
             if (cmd_phasedStart > 0) sleep(cmd_phasedStart);
             sessions[i].mThread = std::thread(&sessionThread, i, repeat, ignoreErrors);
         }
-        for (auto i = 0; i < parallelism; i++) {
+        for (auto i = 0u; i < parallelism; i++) {
             sessions[i].mThread.join();
         }
-        for (auto i = 0; i < parallelism; i++) {
+        for (auto i = 0u; i < parallelism; i++) {
             if (sessions[i].exitCode != 0) return sessions[i].exitCode;
         }
     }
@@ -934,4 +940,3 @@ main(int argc, char* argv[])
 
     return 0;
 }
-

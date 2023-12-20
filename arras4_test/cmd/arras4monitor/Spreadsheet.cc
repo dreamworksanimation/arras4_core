@@ -76,7 +76,7 @@ Spreadsheet::print(bool wrapUnformatted) {
     gInteractive = isatty(STDOUT_FILENO);
     if (mRows.size() == 0) return;
     findColumnWidths();
-    int width, height;
+    int width{0}, height{0};
     if (gInteractive) {
         termGetSize(width, height);
         termClear();
@@ -101,12 +101,12 @@ Spreadsheet::print(bool wrapUnformatted) {
 
     bool highlighted=false;
     int line=1;
-    for (auto r = 1; r < mRows.size(); r++) {
+    for (auto r = 1u; r < mRows.size(); r++) {
         if (highlighted != mRows[r].highlighted()) {
             termBold(mRows[r].highlighted());
             highlighted = mRows[r].highlighted();
         }
-        if (r == height) break;
+        if (static_cast<int>(r) == height) break;
         chars = 0;
         if (mRows[r].isUnformatted()) {
             const std::string& unformatted = mRows[r].getUnformatted();
@@ -117,7 +117,7 @@ Spreadsheet::print(bool wrapUnformatted) {
                 size_t indent = 0;
                 while (1) {
                     std::string fragment = unformatted.substr(index, chunk);
-                    printf("%*s%s",indent,"",fragment.c_str());
+                    printf("%*s%s",static_cast<int>(indent),"",fragment.c_str());
 
                     size -= fragment.length();
                     index += fragment.length();

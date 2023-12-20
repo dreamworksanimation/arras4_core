@@ -38,6 +38,7 @@ variants = [
     ['os-CentOS-7', 'refplat-vfx2022.0'],
     ['os-rocky-9', 'refplat-vfx2021.0'],
     ['os-rocky-9', 'refplat-vfx2022.0'],
+    ['os-rocky-9', 'refplat-vfx2023.0'],
 ]
 
 sconsTargets = {}
@@ -47,7 +48,7 @@ for variant in variants:
 private_build_requires = [
     build_system_pbr,
     'cppunit', 
-    'gcc-6.3.x|9.3.x'
+    'gcc-6.3.x|9.3.x|11.x'
 ]
 
 if build_system is 'cmake':

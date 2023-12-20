@@ -8,6 +8,11 @@
 
 #include "Data.h"
 
+#if defined(JSONCPP_VERSION_MAJOR) // Early version of jsoncpp don't define this.
+// Newer versions of jsoncpp renamed the memberName method to name.
+#define memberName name
+#endif
+
 using namespace arras4::network;
 
 const char* DWA_CONFIG_ENV_NAME = "DWA_CONFIG_SERVICE";
@@ -193,7 +198,7 @@ getSessions(
     Json::ArrayIndex size = jsonSessions.size();
 
 
-    for (auto i = 0; i < size; i++) {
+    for (auto i = 0u; i < size; i++) {
         Json::Value value = jsonSessions[i];
         if (value.isObject()) {
             Session session;
@@ -225,8 +230,9 @@ getSessions(
                 node.mId = nodeJson["id"].asString();
                 node.mHostname = nodeJson["hostname"].asString();
                 node.mIpAddress = nodeJson["ipAddress"].asString();
-                node.mHttpPort = nodeJson["httpPort"].asUInt();
-                node.mPort = nodeJson["port"].asUInt();
+                node.mHttpPort = static_cast<unsigned short>(
+                    nodeJson["httpPort"].asUInt());
+                node.mPort = static_cast<unsigned short>(nodeJson["port"].asUInt());
                 std::string status = nodeJson["status"].asString();
                 if (status == "UP") {
                     node.mStatus = Node::UP;
@@ -256,8 +262,8 @@ getSessions(
                 std::string nodeId = assignmentJson["nodeId"].asString();
                 // most of the node information is redundant
                 const Json::Value computations = assignmentJson["config"]["computations"];
-                for (Json::Value::iterator iter = computations.begin(); iter != computations.end(); ++iter) {
-                    const Json::ValueIterator::reference computationJson = *iter;
+                for (auto iter = computations.begin(); iter != computations.end(); ++iter) {
+                    auto computationJson = *iter;
                     Computation computation;
                     computation.mId = iter.key().asString();
                     if (computation.mId == "(client)") continue;
@@ -275,7 +281,8 @@ getSessions(
                     }
                     computation.mNodeId = nodeId;
                     computation.mStats.mReservedCores = computationJson["requirements"]["resources"]["cores"].asFloat();
-                    computation.mStats.mReservedMemory = computationJson["requirements"]["resources"]["memoryMB"].asFloat() * 1048576;
+                    computation.mStats.mReservedMemory = static_cast<long>(
+                        computationJson["requirements"]["resources"]["memoryMB"].asFloat() * 1048576.0f);
                     session.mComputations[computation.mName] = computation;
                 }
                 sessions[session.mId] = session;

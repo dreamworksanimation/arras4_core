@@ -86,13 +86,14 @@ class ComputationStats {
         mReservedCores(std::numeric_limits<float>::quiet_NaN()),
         mMemoryUsageBytes(-1),
         mMemoryUsageBytesMax(-1),
+        mReservedMemory(-1),
         mSentMessagesCount5Secs(-1),
         mSentMessagesCount60Secs(-1),
         mSentMessagesCountTotal(-1),
         mReceivedMessagesCount5Secs(-1),
         mReceivedMessagesCount60Secs(-1),
-        mReceivedMessagesCountTotal(-1),
-        mReservedMemory(-1) {}
+        mReceivedMessagesCountTotal(-1)
+        {}
     void zero() {
         mCpuUsage5Secs=0.0;
         mCpuUsage5SecsMax=0.0;
