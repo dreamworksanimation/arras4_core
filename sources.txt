@@ -1,4 +1,4 @@
-# Copyright 2023 DreamWorks Animation LLC and Intel Corporation
+# Copyright 2023-2024 DreamWorks Animation LLC and Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 
 arrase_core was created by merging code from multiple repos. These are the commit ids 

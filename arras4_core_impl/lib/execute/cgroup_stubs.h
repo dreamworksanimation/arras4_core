@@ -1,3 +1,5 @@
+// Copyright 2024 DreamWorks Animation LLC
+// SPDX-License-Identifier: Apache-2.0
 
 enum {
     ECGROUPNOTCOMPILED = 50000,
