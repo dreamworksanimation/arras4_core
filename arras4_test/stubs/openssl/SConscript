@@ -1,3 +1,0 @@
-Import('env')
-
-env.DWAComponent('openssl', LIBS=['ssl'])

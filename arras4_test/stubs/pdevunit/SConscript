@@ -1,3 +1,0 @@
-Import('env')
-
-env.DWAComponent('pdevunit', COMPONENTS=['cppunit'])

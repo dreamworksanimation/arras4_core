@@ -1,4 +1,0 @@
-Import('env')
-
-bin = env.DWAInstallPythonBin('breakpadProcess')
-env.Alias('@install', bin)

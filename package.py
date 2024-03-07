@@ -24,13 +24,6 @@ authors = ['Dreamworks Animation R&D - JoSE Team',
 help = ('For assistance, '
         "please contact the folio's owner at: psw-jose@dreamworks.com")
 
-if 'scons' in sys.argv:
-    build_system = 'scons'
-    build_system_pbr = 'bart_scons-10'
-else:
-    build_system = 'cmake'
-    build_system_pbr = 'cmake_modules'
-
 variants = [
     ['os-CentOS-7', 'refplat-vfx2019.3'],
     ['os-CentOS-7', 'refplat-vfx2020.3'],
@@ -41,28 +34,18 @@ variants = [
     ['os-rocky-9', 'refplat-vfx2023.0'],
 ]
 
-sconsTargets = {}
-for variant in variants:
-    sconsTargets[variant[0]] = ['@install', '@doxygen']
-
 private_build_requires = [
-    build_system_pbr,
+    'cmake_modules',
     'cppunit', 
     'gcc-6.3.x|9.3.x|11.x'
 ]
 
-if build_system is 'cmake':
-    def commands():
-        prependenv('CMAKE_MODULE_PATH', '{root}/lib64/cmake')
-        prependenv('CMAKE_PREFIX_PATH', '{root}')
-        prependenv('LD_LIBRARY_PATH', '{root}/lib64')
-        prependenv('PATH', '{root}/bin')
-        prependenv('ARRAS_SESSION_PATH', '{root}/sessions')
-else:
-    def commands():
-        prependenv('LD_LIBRARY_PATH', '{root}/lib')
-        prependenv('PATH', '{root}/bin')
-        prependenv('ARRAS_SESSION_PATH', '{root}/sessions')
+def commands():
+    prependenv('CMAKE_MODULE_PATH', '{root}/lib64/cmake')
+    prependenv('CMAKE_PREFIX_PATH', '{root}')
+    prependenv('LD_LIBRARY_PATH', '{root}/lib64')
+    prependenv('PATH', '{root}/bin')
+    prependenv('ARRAS_SESSION_PATH', '{root}/sessions')
 
 uuid = '2625d822-f8b4-4e3d-8106-007c2b9f42c2'
 
