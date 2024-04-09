@@ -25,8 +25,6 @@ help = ('For assistance, '
         "please contact the folio's owner at: psw-jose@dreamworks.com")
 
 variants = [
-    ['os-CentOS-7', 'refplat-vfx2019.3'],
-    ['os-CentOS-7', 'refplat-vfx2020.3'],
     ['os-CentOS-7', 'refplat-vfx2021.0'],
     ['os-CentOS-7', 'refplat-vfx2022.0'],
     ['os-rocky-9', 'refplat-vfx2021.0'],
