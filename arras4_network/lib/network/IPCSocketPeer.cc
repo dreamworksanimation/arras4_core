@@ -1,7 +1,17 @@
 // Copyright 2023-2024 DreamWorks Animation LLC and Intel Corporation
 // SPDX-License-Identifier: Apache-2.0
 
-#include "platform.h"
+#include "network_platform.h"
+
+#ifdef PLATFORM_WINDOWS
+
+#include <winsock2.h>
+#include <BaseTsd.h>
+#include <WS2tcpip.h>
+#include "mstcpip.h"
+typedef SSIZE_T ssize_t;
+
+#else
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -10,6 +20,8 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <sys/types.h>
+
+#endif
 
 #include "IPCSocketPeer.h"
 #include "SocketPeer.h"
@@ -22,7 +34,11 @@
 #include <string.h>
 #include <sstream>
 
-#include <linux/un.h>
+#ifdef PLATFORM_LINUX
+    #include <linux/un.h>
+#elif defined PLATFORM_APPLE
+    #include <sys/un.h>
+#endif
 
 namespace arras4 {
 namespace network {
@@ -58,7 +74,8 @@ IPCSocketPeer::listen(const std::string& aIPCName, int aMaxPendingConnections)
 
     // create an IPC socket
     // the most likely cause of an error here would be running out of file descriptors
-    mSocket = ::socket(AF_UNIX, SOCK_STREAM | ARRAS_SOCK_CLOEXEC, 0);
+    SOCKET_CREATE(mSocket, AF_UNIX);
+    
     if (mSocket == ARRAS_INVALID_SOCKET) {
         // save errno before doing anything else
         int save_errno = getSocketError();
@@ -72,8 +89,12 @@ IPCSocketPeer::listen(const std::string& aIPCName, int aMaxPendingConnections)
 
     // make the I/O non-blocking
     int yes = 1;
-    if (ioctl(mSocket, FIONBIO, (char*)&yes) < 0) {
 
+#ifdef PLATFORM_WINDOWS
+    if (ioctlsocket(mSocket, FIONBIO, (u_long*)&yes) < 0) {
+#else
+    if (ioctl(mSocket, FIONBIO, (char*)&yes) < 0) {
+#endif
         // save errno before doing anything else
         int save_errno = getSocketError();
 
@@ -144,7 +165,7 @@ IPCSocketPeer::connect(const std::string& aIPCName)
         throw InvalidParameterError("IPC name too long. Must be 107 chars or fewer.");
     }
 
-    mSocket = ::socket(AF_UNIX, SOCK_STREAM | ARRAS_SOCK_CLOEXEC, 0);
+    SOCKET_CREATE(mSocket, AF_UNIX);
     if (mSocket == ARRAS_INVALID_SOCKET) {
         // save errno before doing anything else
         int save_errno = getSocketError();
@@ -168,7 +189,7 @@ IPCSocketPeer::connect(const std::string& aIPCName)
         // save errno before doing anything else
         int save_errno = getSocketError();
 
-        close(mSocket);
+        SOCKET_CLOSE(mSocket);
 
         mSocket = ARRAS_INVALID_SOCKET;
         std::string err("Could not connect to IPC endpoint: ");

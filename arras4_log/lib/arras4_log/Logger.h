@@ -115,7 +115,7 @@ public:
      * \brief Set the default logger instance.
      * \note The default logger is used by the macros and returned by Logger::instance()
      */
-    static void setDefault(Logger& logger) { sharedInstance = &logger; }
+    static void setDefault(Logger& logger);
 
 protected:
 

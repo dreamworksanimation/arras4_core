@@ -3,7 +3,8 @@
 
 cmake_minimum_required (VERSION 3.23.1)
 
-include(packageVersion)  # Sets versionString, projectString and PACKAGE_NAME
+include(OMR_PackageVersion)  # Sets versionString, projectString and PACKAGE_NAME
+
 set(projectString ArrasCore) # Override projectString
 project(${projectString}
     VERSION ${versionString}
@@ -12,6 +13,8 @@ project(${projectString}
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
 list(APPEND CMAKE_MESSAGE_CONTEXT ${PROJECT_NAME})
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+include(OMR_Platform)
 
 # ================================================
 # Options
@@ -36,12 +39,22 @@ find_package(Boost REQUIRED
     program_options
     system)
 
-find_package(Libuuid REQUIRED)
-find_package(Libcurl REQUIRED)
+if (IsWindowsPlatform)
+    find_package(curl REQUIRED)
+endif()
+
+if (IsUnixPlatform)
+    find_package(Libuuid REQUIRED)
+    find_package(Libcurl REQUIRED)
+    if (IsLinuxPlatform)
+        find_package(Libatomic REQUIRED)
+    endif()
+endif()
+
 find_package(Microhttpd REQUIRED)
 find_package(JsonCpp REQUIRED)
 find_package(OpenSSL REQUIRED)
-find_package(Libatomic REQUIRED)
+
 if(${PROJECT_NAME_UPPER}_BUILD_TESTING)
     find_package(CppUnit REQUIRED)
 endif()
@@ -49,8 +62,15 @@ endif()
 # ================================================
 # Set the RPATH for binaries in the install tree
 # ================================================
-set(CMAKE_INSTALL_RPATH $ORIGIN $ORIGIN/../lib64)
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+if (IsUnixPlatform)
+    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+    if (IsDarwinPlatform)
+        set(CMAKE_INSTALL_RPATH "@loader_path/" "@loader_path/../lib")
+    elseif(IsLinuxPlatform)
+        set(CMAKE_INSTALL_RPATH $ORIGIN $ORIGIN/../lib64)
+    endif()
+endif()
 
 # if OPT_LEVEL is set use its value to override the CMAKE_BUILD_TYPE because the
 # rez cmake plugin does not have an easy way to set the build_target.
@@ -68,14 +88,17 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
-# Create include/${PACKAGE_NAME} link in the build directory for generated headers.
-file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/include)
-file(CREATE_LINK ../lib ${PROJECT_BINARY_DIR}/include/${PACKAGE_NAME} SYMBOLIC)
+if (IsUnixPlatform)
+    # Create include/${PACKAGE_NAME} link in the build directory for generated headers.
+    file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/include)
+    file(CREATE_LINK ../lib ${PROJECT_BINARY_DIR}/include/${PACKAGE_NAME} SYMBOLIC)
+endif()
 
 include(${PROJECT_NAME}CompileDefinitions)
 include(${PROJECT_NAME}CompileFeatures)
 include(${PROJECT_NAME}CompileOptions)
 include(${PROJECT_NAME}LinkOptions)
+
 include(SConscriptStub)
 
 # ================================================
@@ -88,7 +111,12 @@ add_subdirectory(arras4_log)
 add_subdirectory(arras4_network)
 add_subdirectory(arras4_core_impl)
 add_subdirectory(arras4_client)
-add_subdirectory(arras4_test)
+
+if(IsUnixPlatform)
+    # not yet ported to Windows
+    add_subdirectory(arras4_test)
+endif()
+
 if(GLD STREQUAL "$ENV{STUDIO}")
     install(FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/scons/SDKScript

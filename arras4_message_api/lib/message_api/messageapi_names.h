@@ -4,6 +4,8 @@
 #ifndef ARRAS4_MESSAGEAPI_NAMES_H_
 #define ARRAS4_MESSAGEAPI_NAMES_H_
 
+#include "message_api_platform.h"
+
 #include <string>
 
 namespace arras4 {
@@ -11,7 +13,7 @@ namespace arras4 {
 
 
 // names of standard message data, available through 'get'
-struct MessageData {
+struct MESSAGE_API_EXPORT MessageData {
     static const std::string instanceId;      // datatype string
     static const std::string sourceId;        // datatype string
     static const std::string creationTimeSecs;        // datatype int
@@ -22,7 +24,7 @@ struct MessageData {
 };
 
 // names of standard message data, available to be set when sending
-struct MessageOptions {
+struct MESSAGE_API_EXPORT MessageOptions {
     // set message source id
     static const std::string sourceId;       // datatype string
     static const std::string routingName;    // datatype string

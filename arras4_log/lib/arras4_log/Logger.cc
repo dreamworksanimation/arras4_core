@@ -69,6 +69,12 @@ Logger::instance()
     return *sharedInstance;
 }
 
+/*static*/ void
+Logger::setDefault(Logger& logger)
+{
+    sharedInstance = &logger;
+}
+
 void
 Logger::setThreshold(Level level)
 {

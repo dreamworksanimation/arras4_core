@@ -1,14 +1,21 @@
 // Copyright 2023-2024 DreamWorks Animation LLC and Intel Corporation
 // SPDX-License-Identifier: Apache-2.0
 
+// prevent Windows.h defining min and max macros
+#define NOMINMAX
+
 #include "HttpServerRequest.h"
 #include <algorithm>
 #include <cstring>
 
 #include <microhttpd.h>  // for MHD_get_connection_info
+
+#include "httpserver_platform.h"
+
+#ifdef PLATFORM_UNIX
 #include <sys/socket.h>
 #include <netdb.h>       // for getnameinfo
-
+#endif
 
 namespace arras4 {
 namespace network {

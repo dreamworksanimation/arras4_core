@@ -37,6 +37,7 @@ target_link_libraries(${LibName}
         ${PROJECT_NAME}::chunking
         ${PROJECT_NAME}::core_messages
         ${PROJECT_NAME}::network
+        ${PROJECT_NAME}::shared_impl
         dl
 )
 

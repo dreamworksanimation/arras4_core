@@ -48,8 +48,14 @@ std::string
 PongMessage::timeString() const
 {
     tm date;
-    time_t secs = static_cast<time_t>(mTimeSecs);
+    time_t secs = static_cast<time_t>(mTimeSecs); 
+
+#ifdef PLATFORM_WINDOWS
+    localtime_s(&date, &secs);
+#else
     localtime_r(&secs, &date);
+#endif
+
     std::stringstream ss;
     ss << std::setfill('0')
        << std::setw(2) << date.tm_mday << "/"

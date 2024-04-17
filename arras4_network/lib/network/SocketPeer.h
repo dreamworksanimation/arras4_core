@@ -6,7 +6,7 @@
 
 #include "Peer.h"
 #include "PeerException.h"
-#include "platform.h"
+#include "network_platform.h"
 #include <memory>
 
 namespace arras4 {

@@ -4,8 +4,11 @@
 #ifndef __ARRAS4_HTTP_TYPESH__
 #define __ARRAS4_HTTP_TYPESH__
 
-#include <string>
+#ifdef PLATFORM_UNIX
 #include <strings.h> // strcasecmp
+#endif
+
+#include <string>
 #include <map>
 
 namespace arras4 {
@@ -17,7 +20,11 @@ class Buffer;
 
 struct CaseInsensitiveLess {
     bool operator() (const std::string & s1, const std::string & s2) const {
-        return strcasecmp(s1.c_str(),s2.c_str()) < 0;
+#ifdef PLATFORM_WINDOWS
+            return _stricmp(s1.c_str(), s2.c_str()) < 0;
+#else
+            return strcasecmp(s1.c_str(), s2.c_str()) < 0;
+#endif
     }
 };
 
@@ -70,7 +77,7 @@ enum HttpMethod {
     GET,
     POST,
     PUT,
-    DELETE,
+    HTTPDELETE, // DELETE conflicts with a macro in windows.h
     OPTIONS,
     PUT_MULTIPART,
 };

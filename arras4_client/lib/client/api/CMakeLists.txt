@@ -9,15 +9,26 @@ set(ExportGroup ${PROJECT_NAME}Targets)
 add_library(${LibName} SHARED "")
 add_library(${PROJECT_NAME}::client_api ALIAS ${LibName})
 
+if (IsUnixPlatform)
+    set(PlatformSpecificSources
+            ProgressSender.cc
+            RezResolve.cc)
+endif()
+
 target_sources(${LibName}
     PRIVATE
         AcapAPI.cc
         Client.cc
         Component.cc
-        ProgressSender.cc
-        RezResolve.cc
         SessionDefinition.cc
+        ${PlatformSpecificSources}
 )
+
+if (IsUnixPlatform)
+    set(PlatformSpecificHeaders
+            ProgressSender.h
+            RezResolve.h)
+endif()
 
 set_property(TARGET ${LibName}
     PROPERTY PUBLIC_HEADER
@@ -25,22 +36,27 @@ set_property(TARGET ${LibName}
         Client.h
         ClientException.h
         Component.h
-        ProgressSender.h
-        RezResolve.h
         SessionDefinition.h
+        ${PlatformSpecificHeaders}
 )
+
+if (IsUnixPlatform)
+    set(PlatformSpecificLibs
+            ${PROJECT_NAME}::client_local
+            ${PROJECT_NAME}::execute)
+endif()
 
 target_link_libraries(${LibName}
     PUBLIC
         ${PROJECT_NAME}::network
         ${PROJECT_NAME}::http
         ${PROJECT_NAME}::arras4_log
-        ${PROJECT_NAME}::client_local
         ${PROJECT_NAME}::core_messages
-        ${PROJECT_NAME}::execute
         ${PROJECT_NAME}::message_impl
         ${PROJECT_NAME}::shared_impl
         ${PROJECT_NAME}::chunking
+        Boost::filesystem
+        ${PlatformSpecificLibs}
 )
 
 target_include_directories(${LibName}
@@ -62,3 +78,4 @@ include(GNUInstallDirs)
 install(TARGETS ${LibName}
         EXPORT ${ExportGroup}
         PUBLIC_HEADER DESTINATION include/${InstallIncludeDir})
+

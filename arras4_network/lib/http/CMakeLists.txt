@@ -23,10 +23,17 @@ set_property(TARGET ${LibName}
         HttpResponse.h
 )
 
+if(IsUnixPlatform)
+    set(PlatformSpecificLibs Libcurl::Libcurl)
+elseif(IsWindowsPlatform)
+    set(PlatformSpecificLibs CURL::libcurl)
+endif()
+
 target_link_libraries(${LibName}
     PUBLIC
         ${PROJECT_NAME}::network
-        Libcurl::Libcurl)
+        ${PlatformSpecificLibs}
+)
 
 target_include_directories(${LibName}
     PUBLIC

@@ -2,4 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 add_subdirectory(computation_api)
-add_subdirectory(standalone)
+if(IsUnixPlatform)
+    add_subdirectory(standalone)
+endif()

@@ -11,9 +11,9 @@ add_library(${PROJECT_NAME}::network ALIAS ${LibName})
 
 target_sources(${LibName}
     PRIVATE
-        BasicFramingSink.cc 
-        BasicFramingSource.cc 
-        BufferedSink.cc 
+        BasicFramingSink.cc
+        BasicFramingSource.cc
+        BufferedSink.cc
         BufferedSource.cc
         Encryption.cc
         FileDataSource.cc
@@ -35,7 +35,7 @@ set_property(TARGET ${LibName}
         DataSource.h
         Encryption.h
         FileDataSource.h
-        FileError.h 
+        FileError.h
         Frame.h
         FramingError.h
         InetSocketPeer.h
@@ -46,12 +46,18 @@ set_property(TARGET ${LibName}
         OutOfMemoryError.h
         Peer.h
         PeerException.h
-        platform.h
+        network_platform.h
         SocketPeer.h
 )
 
-target_include_directories(${LibName} 
-    PUBLIC 
+if(IsWindowsPlatform)
+    target_link_libraries(${LibName}
+        PUBLIC
+            ws2_32)
+endif()
+
+target_include_directories(${LibName}
+    PUBLIC
         $<BUILD_INTERFACE:${BuildIncludeDir}>
         $<INSTALL_INTERFACE:include>)
 

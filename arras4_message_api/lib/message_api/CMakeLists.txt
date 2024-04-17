@@ -11,41 +11,45 @@ add_library(${PROJECT_NAME}::message_api ALIAS ${LibName})
 
 target_sources(${LibName}
     PRIVATE
-        Address.cc 
-        ArrasTime.cc 
-        ContentRegistry.cc 
-        messageapi_names.cc 
-        Object.cc 
-        UUID.cc
-)
+        Address.cc
+        ArrasTime.cc
+        ContentRegistry.cc
+        messageapi_names.cc
+        Object.cc
+        UUID.cc)
 
 set_property(TARGET ${LibName}
     PROPERTY PUBLIC_HEADER
-        Address.h 
-        ArrasTime.h 
-        ContentMacros.h 
-        ContentRegistry.h 
-        DataInStream.h 
+        Address.h
+        ArrasTime.h
+        ContentMacros.h
+        ContentRegistry.h
+        DataInStream.h
         DataOutStream.h
-        Message.h 
-        messageapi_names.h 
-        messageapi_types.h 
-        MessageContent.h 
-        MessageFormatError.h 
-        Metadata.h 
-        Object.h 
-        ObjectContent.h 
+        Message.h
+        messageapi_names.h
+        messageapi_types.h
+        MessageContent.h
+        MessageFormatError.h
+        message_api_platform.h
+        Metadata.h
+        Object.h
+        ObjectContent.h
         UUID.h
 )
 
+if (IsUnixPlatform)
+    set(PlatformSpecificLibs Libuuid::Libuuid)
+endif()
+
 target_link_libraries(${LibName}
     PUBLIC
-        JsonCpp::JsonCpp 
-        Libuuid::Libuuid
+        JsonCpp::JsonCpp
+        ${PlatformSpecificLibs}
 )
 
-target_include_directories(${LibName} 
-    PUBLIC 
+target_include_directories(${LibName}
+    PUBLIC
         $<BUILD_INTERFACE:${BuildIncludeDir}>
         $<INSTALL_INTERFACE:include>)
 

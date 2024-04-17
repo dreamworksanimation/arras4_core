@@ -6,14 +6,18 @@
 #include <arras4_log/Logger.h>
 #include <arras4_log/LogEventStream.h>
 
+#ifdef PLATFORM_UNIX
 #include <unistd.h>
 #include <dirent.h>
 #include <sched.h>
+#endif
+
 #include <stdlib.h>
 #include <cstring>
 #include <iostream>
 
 namespace {
+
 
 // Utilities for cpu affinity
 //
@@ -21,6 +25,8 @@ namespace {
 // List must be integers and commas, no white space (e.g. "1,2,3,4,5,6")
 // Returns true on success and false on failure
 //
+#ifdef PLATFORM_LINUX
+
 bool procListToCpuSet(const std::string& procList, 
                       cpu_set_t& cpuSet,
                       unsigned requiredCount)
@@ -65,11 +71,14 @@ std::string cpuSetToProcList(const cpu_set_t& cpuSet)
     return ret;
 }
 
+#endif // PLATFORM_LINUX
+
 }
 
 namespace arras4 {
     namespace impl {
 
+#ifdef PLATFORM_LINUX
 /* static */ bool
 ExecutionLimits::setAffinityForProcess(const cpu_set_t& cpuSet, pid_t pid)
 {
@@ -96,6 +105,7 @@ ExecutionLimits::setAffinityForProcess(const cpu_set_t& cpuSet, pid_t pid)
     closedir(dir);
     return true;
 }
+#endif // PLATFORM_LINUX
 
 bool ExecutionLimits::setFromObject(api::ObjectConstRef obj)
 {
@@ -163,16 +173,21 @@ void ExecutionLimits::toObject(api::ObjectRef obj)
     obj["maxMemoryMB"] = mMaxMemoryMB;
     obj["maxCores"] = mMaxCores;
     obj["threadsPerCore"] = mThreadsPerCore;
-    
+
     if (mUseAffinity) {
         obj["useAffinity"] = true;
+
+#ifdef PLATFORM_LINUX
         obj["cpuSet"] = cpuSetToProcList(mCpuSet);
+#endif
+
     }
 }   
 
 bool ExecutionLimits::enableAffinity(const std::string& cpus,
                                      const std::string& hyperthreadCpus)
 {
+#ifdef PLATFORM_LINUX
     cpu_set_t cpuSet;
     if (!procListToCpuSet(cpus,cpuSet,mMaxCores)) {
         ARRAS_ERROR(log::Id("invalidLimits") <<
@@ -202,6 +217,8 @@ bool ExecutionLimits::enableAffinity(const std::string& cpus,
     std::memcpy(reinterpret_cast<void*>(&mCpuSet),
                 reinterpret_cast<void*>(&cpuSet),
                 sizeof(cpu_set_t));
+#endif // PLATFORM_LINUX
+    mUseAffinity = true;
     return true;
 }
 
@@ -212,7 +229,9 @@ void ExecutionLimits::apply(std::thread& /*handlerThread*/) const
     if (mUseAffinity) {
         // to maintain compatibility with Arras 3 behavior, we
         // apply affinity to the entire process at present
+#ifdef PLATFORM_LINUX
         setAffinityForProcess(mCpuSet, getpid());
+#endif
     }
     // todo : apply memory limit
     // this limit has not been applied in previous Arras versions,

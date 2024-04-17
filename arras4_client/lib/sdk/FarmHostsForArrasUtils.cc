@@ -133,7 +133,7 @@ FarmHostsForArrasUtils::cancelGroup(int groupId) const
     std::string url(mBaseUrl);
     url += std::string(CANCEL_PATH) + std::to_string(groupId);
     try {
-        network::HttpRequest req(url, network::DELETE);
+        network::HttpRequest req(url, network::HTTPDELETE);
         req.setUserAgent(USER_AGENT);
         const network::HttpResponse& resp = req.submit();
         std::string respStr;

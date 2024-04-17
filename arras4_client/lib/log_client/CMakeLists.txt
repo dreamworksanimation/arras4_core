@@ -24,7 +24,6 @@ target_link_libraries(${LibName}
         ${PROJECT_NAME}::arras4_log
         ${PROJECT_NAME}::http
         ${PROJECT_NAME}::message_api
-        Boost::headers
 )
 
 target_include_directories(${LibName}
@@ -32,9 +31,9 @@ target_include_directories(${LibName}
         $<BUILD_INTERFACE:${BuildIncludeDir}>
         $<INSTALL_INTERFACE:include>)
 
-target_compile_options(${LibName}
-    PRIVATE
-        -Wno-pessimizing-move)
+if(IsUnixPlatform)
+    target_compile_options(${LibName} PRIVATE -Wno-pessimizing-move)
+endif()
 
 # If at Dreamworks add a SConscript stub file so others can use this library.
 SConscript_Stub(${LibName})

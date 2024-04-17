@@ -30,7 +30,10 @@ target_link_libraries(${LibName}
         ${PROJECT_NAME}::arras4_athena
         ${PROJECT_NAME}::message_api
         ${PROJECT_NAME}::execute
-        ${PROJECT_NAME}::network)
+        ${PROJECT_NAME}::network
+        ${PROJECT_NAME}::http
+        ${PROJECT_NAME}::shared_impl)
+
 
 target_include_directories(${LibName}
     PUBLIC

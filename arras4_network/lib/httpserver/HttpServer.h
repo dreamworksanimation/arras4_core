@@ -5,14 +5,14 @@
 #define __ARRAS_HTTPSERVER_H__
 
 #include "HttpRequestEvent.h"
+#include "httpserver_platform.h"
 
-#include <network/SocketPeer.h>
+#include <microhttpd.h>
 #include <string>
 #include <thread>
 
-#include <microhttpd.h>
-// struct MHD_Daemon;
-// struct MHD_Connection;
+struct MHD_Daemon;
+struct MHD_Connection;
 
 namespace arras4 {
     namespace network {
@@ -30,7 +30,7 @@ namespace arras4 {
             HttpRequestEvent GET;
             HttpRequestEvent POST;
             HttpRequestEvent PUT;
-            HttpRequestEvent DELETE;
+            HttpRequestEvent HTTPDELETE; // DELETE conflicts with a macro in windows.h
             HttpRequestEvent OPTIONS;
 
             int getListenPort() { return mPort; }

@@ -11,7 +11,6 @@ add_library(${PROJECT_NAME}::execute ALIAS ${LibName})
 
 target_sources(${LibName}
     PRIVATE
-        ControlGroup.cc
         Environment.cc
         IoCapture.cc
         process_utils.cc
@@ -25,7 +24,6 @@ target_sources(${LibName}
 
 set_property(TARGET ${LibName}
     PROPERTY PUBLIC_HEADER
-        ControlGroup.h
         Environment.h
         IoCapture.h
         MemoryTracking.h
@@ -50,9 +48,13 @@ target_link_libraries(${LibName}
         ${PROJECT_NAME}::network
 )
 
-if(EXISTS /usr/lib64/libcgroup.so)
-    target_link_libraries(${LibName} PUBLIC cgroup)
-    target_compile_definitions(${LibName} PRIVATE ARRAS_ENABLE_CGROUP)
+if(IsLinuxPlatform)
+    target_sources(${LibName} PRIVATE ControlGroup.cc)
+    set_property(TARGET ${LibName} APPEND PROPERTY PUBLIC_HEADER ControlGroup.h)
+    if(EXISTS /usr/lib64/libcgroup.so)
+        target_link_libraries(${LibName} PUBLIC cgroup)
+        target_compile_definitions(${LibName} PRIVATE ARRAS_ENABLE_CGROUP)
+    endif()
 endif()
 
 target_include_directories(${LibName}

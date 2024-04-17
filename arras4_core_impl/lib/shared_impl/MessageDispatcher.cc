@@ -77,7 +77,7 @@ void MessageDispatcher::outgoingThreadProc()
             mSource->putEnvelope(envelope);   
                       // mSource is valid while thread is running...
             // Don't count heartbeat in the message count
-            if (envelope.classId() != ExecutorHeartbeat::ID) {
+            if (envelope.classId() != ExecutorHeartbeat::CLASS_ID()) {
                 mSentCount++;
             }
         } catch (ShutdownException&) {

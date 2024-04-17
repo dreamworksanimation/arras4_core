@@ -2,9 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "UUID.h"
-
-#include <uuid/uuid.h>
 #include <iomanip>
+
+#ifdef PLATFORM_WINDOWS
+#include "UUID_windows.cc"
+#endif
+
+#ifdef PLATFORM_UNIX
+#include "UUID_unix.cc"
+#endif
 
 namespace arras4 {
     namespace api {
@@ -17,33 +23,11 @@ UUID& UUID::operator=(const UUID& other)
     return *this;
 }
 
-void UUID::toString(std::string& str) const
-{
-    char out[37]; // str rep is 36 chars + trailing \0
-    unsigned char* uu = const_cast<unsigned char*>(mBytes.data());
-    uuid_unparse_lower(uu,out);
-    str.assign(out);
-}
- 
 std::string UUID::toString() const
 {
     std::string s;
     toString(s);
     return s;
-}
- 
-void UUID::parse(const std::string& aStrRep)
-{
-    unsigned char* uu = mBytes.data();
-    char *in = const_cast<char*>(aStrRep.c_str());
-    if (uuid_parse(in,uu) != 0)
-        clear();
-}
- 
-void UUID::regenerate()
-{ 
-    unsigned char* uu = mBytes.data();
-    uuid_generate(uu);
 }
 
 /*static*/UUID UUID::generate()

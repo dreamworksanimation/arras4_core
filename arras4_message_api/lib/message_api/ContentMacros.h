@@ -42,13 +42,13 @@
             static std::string name(#c);             \
             return name;                             \
         }                                            \
-    const ::arras4::api::ClassID& classId() const    \
+    const ::arras4::api::ClassID& classId() const override \
         { return CLASS_ID(); }                       \
-    unsigned classVersion() const                    \
+    unsigned classVersion() const override           \
         { return CLASS_VERSION(); }                  \
-    const std::string& defaultRoutingName() const    \
+    const std::string& defaultRoutingName() const override \
         { return CLASS_NAME(); }                     \
-    ::arras4::api::MessageContent::Format format() const    \
+    ::arras4::api::MessageContent::Format format() const override \
     { return ::arras4::api::MessageContent::Object; }       \
     typedef std::shared_ptr<c> Ptr;                  \
     typedef std::shared_ptr<const c> ConstPtr;       \

@@ -5,8 +5,7 @@
 
 #include <array>
 #include <iostream>
-
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <iomanip>
 
 namespace arras4 {
 namespace log {
@@ -128,12 +127,28 @@ AthenaLogger::log_internal(Level level, const char* message)
     }
         
     // add timestamp
+    auto now = std::chrono::system_clock::now();
+    auto now_c = std::chrono::system_clock::to_time_t(now);
+    struct tm now_tm;
+#ifdef PLATFORM_WINDOWS
+    localtime_s(&now_tm, &now_c);
+#else
+    localtime_r(&now_c, &now_tm);
+#endif
+
     // log message requires microsecond precision
-    boost::posix_time::ptime bpnow =  boost::posix_time::microsec_clock::local_time();
-    s << boost::posix_time::to_iso_extended_string(bpnow);
+    long long millis = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+    s << std::setfill('0')
+        << std::put_time(&now_tm, "%FT%H:%M:")
+        << std::setw(2) << (millis / 1000) % 60 << '.'
+        << std::setw(3) << millis % 1000;
     
     // add level, process, thread and session
+#ifdef PLATFORM_WINDOWS
+    DWORD pid = GetCurrentProcessId();
+#else
     pid_t pid = getpid();
+#endif
     s << " " << LEVEL_ABBR[realLevel]
       << " " << mProcessName
       << "[" << pid << "]:"
@@ -148,21 +163,25 @@ AthenaLogger::log_internal(Level level, const char* message)
 
     // send to syslog, but skip trace messages
     if (realLevel < LOG_TRACE) {
-        tm timeStamp = boost::posix_time::to_tm(bpnow);
         mSyslog.sendMessage(LEVEL_TO_PRI[realLevel],
-                            &timeStamp,
+                            &now_tm,
                             mLogIdent,
                             s.str());
     }
 
     // send to console
     if (mConsoleStyle == ConsoleLogStyle::None) {
-	return;
+        return;
     }
+#ifdef PLATFORM_APPLE
+    // TODO: not sure why this is changed for APPLE
+    std::ostream& o = (level > Logger::LOG_ERROR ? std::cout : std::cerr);
+#else
     std::ostream& o = (level > Logger::LOG_ERROR ? *mOutStream : *mErrStream);
+#endif
     // In local mode user sees console logs, so support a shorter format (ARRAS-3632)
     if (mConsoleStyle == ConsoleLogStyle::Short) {
-	s.str(message);
+        s.str(message);
     }
     if (mUseColor) {
         o << (LEVEL_ANSI_COLORS[realLevel] + s.str() + ANSI_COLOR_RESET + "\n");
@@ -182,10 +201,16 @@ void
 AthenaLogger::logStats(Level level, const std::string& jsonStr)
 { 
     // syslog timestamp requires current time to second precision
-    boost::posix_time::ptime bpnow =  boost::posix_time::second_clock::local_time();
-    tm timeStamp = boost::posix_time::to_tm(bpnow);
+    auto now = std::chrono::system_clock::now();
+    auto now_c = std::chrono::system_clock::to_time_t(now);
+    struct tm now_tm;
+#ifdef PLATFORM_WINDOWS
+    localtime_s(&now_tm, &now_c);
+#else
+    localtime_r(&now_c, &now_tm);
+#endif
     mSyslog.sendMessage(LEVEL_TO_PRI[level],
-                        &timeStamp,
+                        &now_tm,
                         mStatsIdent,
                         jsonStr);
 }

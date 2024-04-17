@@ -12,6 +12,13 @@ target_sources(${CmdName}
         main.cc
 )
 
+if(IsUnixPlatform)
+    set(PlatformSpecificLibs pthread)
+    if(IsLinuxPlatform)
+        list(APPEND PlatformSpecificLibs Libatomic::Libatomic)
+    endif()
+endif()
+
 target_link_libraries(${CmdName}
     PUBLIC
         ${PROJECT_NAME}::network
@@ -24,10 +31,8 @@ target_link_libraries(${CmdName}
         ${PROJECT_NAME}::arras4_athena
         Boost::program_options
         Boost::filesystem
-        Libatomic::Libatomic
-        pthread
+        ${PlatformSpecificLibs}
 )
-
 # prevent use of crash reporter since it isn't yet supported
 target_compile_definitions(${CmdName} PRIVATE DONT_USE_CRASH_REPORTER)
 

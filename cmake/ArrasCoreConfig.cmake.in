@@ -16,12 +16,19 @@ find_dependency(Boost
     program_options
     system)
 
-find_dependency(Libuuid)
-find_dependency(Libcurl)
+if (IsWindowsPlatform)
+    find_package(curl REQUIRED)
+endif()
+
+if (IsUnixPlatform)
+    find_package(Libuuid REQUIRED)
+    find_package(Libcurl REQUIRED)
+    find_package(Libatomic REQUIRED)
+endif()
+
 find_dependency(Microhttpd)
 find_dependency(JsonCpp)
 find_dependency(OpenSSL)
-find_dependency(Libatomic)
 if(@PROJECT_NAME_UPPER@_BUILD_TESTING)
     find_dependency(CppUnit)
 endif()

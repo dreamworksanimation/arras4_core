@@ -14,6 +14,9 @@
 #include <sys/stat.h>
 #include <signal.h>
 
+#ifdef PLATFORM_APPLE
+    extern char** environ;
+#endif
 
 namespace {
 
@@ -29,6 +32,18 @@ const std::chrono::milliseconds SIGTERM_WAIT(5000);
 // - how long to wait for a SIGKILL to terminate process
 const std::chrono::milliseconds SIGKILL_WAIT(5000);
 
+std::string
+getErrorString(int aErrno)
+{
+    char buffer[1024];
+    buffer[0] = 0;
+#ifdef PLATFORM_APPLE
+    int err = strerror_r(aErrno, buffer, sizeof(buffer));
+    return std::string(buffer);
+#else
+    return std::string(strerror_r(aErrno, buffer, sizeof(buffer)));
+#endif
+}
 
 // thread proc to capture io from a process
 void ioCaptureProc(std::shared_ptr<::arras4::impl::IoCapture> capture,
@@ -134,11 +149,10 @@ StateChange Process::spawn(const SpawnArgs& args)
             err = errno;
         }
         if (err) {
-            char buf[1024];
             ARRAS_ERROR(log::Session(mSessionId.toString()) <<
                         log::Id("pipeFailed") <<
                         "Failed to create pipe for " << logname() << " : " <<
-                        std::string(strerror_r(err, buf, 1024)));
+                        getErrorString(err));
             terminated_internal(ExitStatus::FORK_FAILED);
             return StateChange::Terminated;
         }
@@ -153,11 +167,11 @@ StateChange Process::spawn(const SpawnArgs& args)
     pid_t pid = fork();
     if (pid == -1) {
         // failed fork, go to Terminated
-        char buf[1024];
         ARRAS_ERROR(log::Session(mSessionId.toString()) <<
                     log::Id("forkFailed") <<
                     "Failed to fork " << logname() << " : " <<
-                    std::string(strerror_r(errno, buf, 1024)));
+                    getErrorString(errno));         
+                    
         terminated_internal(ExitStatus::FORK_FAILED);
         mManager.failedFork_cb(*this);
         return StateChange::Terminated;
@@ -203,11 +217,10 @@ StateChange Process::spawn(const SpawnArgs& args)
             }
         }
         if (err) {
-            char buf[1024];
             ARRAS_ERROR(log::Session(mSessionId.toString()) <<
                         log::Id("ioRedirectFailed") <<
                         "Failed to redirect stdout/err for " << logname() << " : " <<
-                        std::string(strerror_r(errno, buf, 1024)));
+                        getErrorString(err));
             _exit(EXITSTATUS_EXECV_FAIL);
         }
     } 
@@ -379,13 +392,12 @@ void Process::doExec(const SpawnArgs& args)
         if (stat(args.workingDirectory.c_str(), &s) == 0) {
             if (s.st_mode & S_IFDIR) {
                 if (chdir(args.workingDirectory.c_str()) !=0) {
-                    char buf[1024];
                     ARRAS_WARN(log::Session(mSessionId.toString()) <<
                                log::Id("warnWorkingingDirectory") <<
                                "Could not chdir to working directory '" << 
                                args.workingDirectory <<
                                "' for " << logname() << " : " << 
-                               std::string(strerror_r(errno, buf, 1024)));
+                               getErrorString(errno));
                 }
             } else {
                 ARRAS_WARN(log::Session(mSessionId.toString()) <<
@@ -394,13 +406,12 @@ void Process::doExec(const SpawnArgs& args)
                            "' does not exist, for " <<  logname());
             }
         } else {
-            char buf[1024];
             ARRAS_WARN(log::Session(mSessionId.toString()) <<
                        log::Id("warnWorkingingDirectory") <<
                        "Could not stat working directory: '" << 
                        args.workingDirectory <<
                        "' for " << logname() << " : " << 
-                       std::string(strerror_r(errno, buf, 1024))); 
+                       getErrorString(errno));
         }
     }
 
@@ -421,15 +432,19 @@ void Process::doExec(const SpawnArgs& args)
     cenv[envVec.size()] = nullptr;
 
     // and exec program
+#ifdef PLATFORM_APPLE
+    environ = cenv;
+    execvp(args.program.c_str(),cargs);
+#else
     execvpe(args.program.c_str(),cargs,cenv);
+#endif
     
     // returning from exec is a fatal error, exit
     // the child process
-    char buf[1024];
     ARRAS_FATAL(log::Session(mSessionId.toString()) <<
                 log::Id("execFailed") <<
                 "Failed to exec " << logname() << " : " <<
-                std::string(strerror_r(errno, buf, 1024)));
+                getErrorString(errno));
 
     // ARRAS-3227 : running exit() crashes the parent process, 
     // replaced with _exit()

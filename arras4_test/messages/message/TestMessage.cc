@@ -15,7 +15,10 @@ bool checkMD5(unsigned char* data,
               unsigned char* md5)
 {
     unsigned char buf[16];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     MD5(data,len,buf);
+#pragma clang diagnostic pop
     for (unsigned i = 0; i < 16; i++) 
         if (md5[i] != buf[i]) return false;
     return true;
@@ -124,7 +127,10 @@ void TestMessage::setRandomData(size_t size)
         x ^= x >> 17;
         x ^= x << 5;
     }
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     MD5(mData,mDataSize,mMD5);
+#pragma clang diagnostic pop
 }
     
 void TestMessage::makeChecksumWrong() 

@@ -10,22 +10,30 @@ set(ExportGroup ${PROJECT_NAME}Targets)
 add_library(${LibName} SHARED "")
 add_library(${PROJECT_NAME}::sdk ALIAS ${LibName})
 
+if (IsUnixPlatform)
+    set(PlatformSpecificSources FarmHostsForArrasUtils.cc)
+endif()
+
 target_sources(${LibName}
     PRIVATE
-        FarmHostsForArrasUtils.cc
         FrameUtils.cc
         MultiSession.cc
         sdk.cc
+        ${PlatformSpecificSources}
 )
+
+if (IsUnixPlatform)
+    set(PlatformSpecificHeaders FarmHostsForArrasUtils.h)
+endif()
 
 set_property(TARGET ${LibName}
     PROPERTY PUBLIC_HEADER
         arras_static_check.h
-        FarmHostsForArrasUtils.h
         FrameUtils.h
         MultiSession.h
         sdk.h
         sdk_impl.h
+        ${PlatformSpecificHeaders}
 )
 
 target_link_libraries(${LibName}

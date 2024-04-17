@@ -36,6 +36,10 @@
 
 namespace bpo = boost::program_options;
 
+#ifdef PLATFORM_APPLE
+#define stat64 stat
+#endif
+
 constexpr size_t READBUF_SIZE = 16*1024;
 char READBUF[READBUF_SIZE];
 

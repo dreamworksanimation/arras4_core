@@ -45,11 +45,11 @@ public:
 
     ~TestMessage() { delete mData; }
 
-    void serialize(arras4::api::DataOutStream& to) const;
-    void deserialize(arras4::api::DataInStream& from, unsigned version);
+    void serialize(arras4::api::DataOutStream& to) const override;
+    void deserialize(arras4::api::DataInStream& from, unsigned version) override;
 
     // for testing message chunking : generally not required in message impls
-    size_t serializedLength() const;
+    size_t serializedLength() const override;
     
     unsigned forcedErrors() const { return mForcedErrors; }
     unsigned& forcedErrors() { return mForcedErrors; }

@@ -13,7 +13,7 @@
 // TODO: decide where this really goes
 
 
-#if defined(__ICC)
+#ifdef __ICC
 
 // use these defines to bracket a region of code that has safe static
 // accesses. Keep the region as small as possible

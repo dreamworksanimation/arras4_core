@@ -9,14 +9,20 @@ set(ExportGroup ${PROJECT_NAME}Targets)
 add_library(${LibName} SHARED "")
 add_library(${PROJECT_NAME}::shared_impl ALIAS ${LibName})
 
+if(IsUnixPlatform) # Linux/Darwin
+    set(PlatformSpecificSources Platform_Linux.cc)
+elseif(IsWindowsPlatform)
+    set(PlatformSpecificSources Platform_Windows.cc)
+endif()
+
 target_sources(${LibName}
     PRIVATE
         DispatcherExitReason.cc
         ExecutionLimits.cc
         MessageDispatcher.cc
         MessageQueue.cc
-        Platform_Linux.cc
         ProcessExitCodes.cc
+        ${PlatformSpecificSources}
 )
 
 set_property(TARGET ${LibName}
@@ -41,6 +47,7 @@ target_link_libraries(${LibName}
         ${PROJECT_NAME}::exceptions
         ${PROJECT_NAME}::computation_api
         ${PROJECT_NAME}::message_impl
+        ${PROJECT_NAME}::core_messages
 )
 
 target_include_directories(${LibName}

@@ -20,6 +20,18 @@ const char* BY_SESSIONID_PATH = "/logs/session/";
 const char* BY_COMPLETE_SESSION_PATH = "/logs/complete/session/";
 const char* USER_AGENT = "arras log client";
 
+std::string urlEncode(const std::string s)
+{
+    std::string r;
+    for (size_t i = 0; i < s.size(); ++i) {
+        if (s[i] == ':') r += "%3A";
+        else if (s[i] == ' ') r += "%20";
+        else if (s[i] == '+') r += "%2B";
+        else r += s[i];
+    }
+    return r;
+}
+
 }  // unnamed namespace
 
 
@@ -366,7 +378,7 @@ LogClient::objectToLogRecords(std::unique_ptr<api::Object> obj)
 
         // First look for the "content" key:
         if (obj->isMember("content")) {
-            const api::Object& content = (*obj)["content"];
+            api::ObjectConstRef content = (*obj)["content"];
 
             // Expecting an array of objects:
             if (content.isArray()) {
@@ -450,21 +462,13 @@ LogClient::buildUrl(
 
     // start is specified.
     if (useTime) {
-        // url encode for start-time
-        std::string s(start);
-        boost::replace_all(s, ":", "%3A");
-        boost::replace_all(s, " ", "%20");
-        boost::replace_all(s, "+", "%2B");
-        url += "&start=" + s;
+
+        url += "&start=" + urlEncode(start);
 
         // end is optional.
         if (!end.empty()) {
-            // url encode for end-time
-            std::string e(end);
-            boost::replace_all(e, ":", "%3A");
-            boost::replace_all(e, " ", "%20");
-            boost::replace_all(e, "+", "%2B");
-            url += "&end=" + e;
+            
+            url += "&end=" + urlEncode(end);
         }
     }
 

@@ -7,10 +7,9 @@
 #include <shared_impl/ExecutionLimits.h>
 #include <shared_impl/ProcessExitCodes.h>
 #include <arras4_athena/AthenaLogger.h>
-#include <arras4_log/AutoLogger.h>
 #include <arras4_log/LogEventStream.h>
 
-#if not defined(DONT_USE_CRASH_REPORTER)
+#ifndef DONT_USE_CRASH_REPORTER
 #include <arras4_crash/CrashReporter.h>
 #endif
 
@@ -20,7 +19,10 @@
 #include <sstream>
 #include <iostream>
 
-#include <linux/oom.h> // OOM_SCORE_ADJ_MAX
+#ifdef PLATFORM_LINUX
+    #include <linux/oom.h> // OOM_SCORE_ADJ_MAX
+    #include <arras4_log/AutoLogger.h>
+#endif
 
 // parses out the command line options for the execComp command,
 // then runs an instance of ExecComp to do the actual work
@@ -35,6 +37,7 @@ unsigned short constexpr SYSLOG_PORT = 514;
 
 namespace bpo = boost::program_options;
 
+#ifdef PLATFORM_LINUX
 void adjustOomScore()
 {
     // we set the "out of memory" score as high as possible so that,
@@ -49,6 +52,7 @@ void adjustOomScore()
                     std::string(e.what()));
     }
 }
+#endif
 
 std::string envConfigMapper(const std::string& envVar) {
     std::string mappedKey;
@@ -186,17 +190,19 @@ main(int argc, char* argv[])
                                 cmdOpts["athena-host"].as<std::string>(),
                                 cmdOpts["athena-port"].as<unsigned short>());
 
+#ifdef PLATFORM_LINUX
     // causes stdout and stderr to go to default logger
+    // TODO: IMPORTANT, this breaks on the Mac, need to revisit AutoLogger on macOS
     AutoLogger autoLogger;
+     // adjust the "Out of Memory" killer settings for this process
+    adjustOomScore();
+#endif
 
     // the configured log level is not set until the start of ExecComp.run(),
     // so if you want debug logging to happen inside this code, set the
     // threshold here:
     // Logger::instance().setThreshold(arras::log::Logger::LOG_DEBUG);
     athenaLogger.setThreadName("main");
-
-    // adjust the "Out of Memory" killer settings for this process
-    adjustOomScore();
 
     ExecutionLimits limits;
     if (!initializeLimits(limits,cmdOpts))

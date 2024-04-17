@@ -10,6 +10,11 @@
 
 #pragma once
 
+// Features that can be enabled by preprocessor symbols
+// FEATURE_LOCAL_SESSIONS : enables local sessions
+// FEATURE_REZ_RESOLVE :  enables client side REZ resolution
+// FEATURE_PROGRESS_SENDER : enable progress sent to IPC port
+
 #include <arras4_athena/AthenaLogger.h>
 #include <client/api/AcapAPI.h>
 #include <client/api/ClientException.h>

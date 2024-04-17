@@ -3,15 +3,20 @@
 
 #include "ProcessManager.h"
 #include "process_utils.h"
-#include "ControlGroup.h"
 #include "ProcessController.h"
 #include "process_utils.h"
+
+#ifdef PLATFORM_LINUX
+#include "ControlGroup.h"
+#endif
 
 #include <arras4_log/Logger.h>
 #include <arras4_log/LogEventStream.h>
 
 #include <unistd.h>
 #include <signal.h> 
+#include <assert.h>
+#include <cassert>
 #include <sys/wait.h>
 
 namespace {
@@ -84,6 +89,12 @@ ProcessManager::ProcessManager(unsigned availableMemoryMb, // = 0
        mLoanMemory(loanMemory),
        mEnforceCpu(enforceCpu)
 {
+#ifndef PLATFORM_LINUX
+    // control groups are only supported on Linux
+    assert(!mUseControlGroups);
+    mUseControlGroups = false;
+#endif
+
     mMemory.set(availableMemoryMb);
     mExitMonitorThread = std::thread(&ProcessManager::exitMonitorProc,this);
     initControlGroups(); 
@@ -310,6 +321,7 @@ Process::Ptr ProcessManager::sgNameToProcess(const std::string& name)
 void ProcessManager::initControlGroups()
 {
     if (mUseControlGroups) {
+#ifdef PLATFORM_LINUX
         try {
             mControlGroup.reset(new ControlGroup());
             mControlGroup->setBaseGroup("arras");
@@ -329,8 +341,7 @@ void ProcessManager::initControlGroups()
         if (mEnforceMemory) ARRAS_DEBUG("Memory loaning " << (mLoanMemory ? "enabled" : "disabled"));
         ARRAS_DEBUG("Cpu limit enforcement " << (mEnforceCpu ? "enabled" : "disabled"));
         ARRAS_DEBUG("Control groups " << (mEnforceCpu ? "enabled" : "disabled"));
-
-        
+#endif  
     } else {
         // clear these so that true can imply mUseControlGroups is true
         mEnforceMemory = mEnforceCpu = mLoanMemory = false;
@@ -353,7 +364,8 @@ void ProcessManager:: createControlSubgroup(Process& p)
     if (mEnforceCpu) {
         localCores = static_cast<float>(p.mAssignedCores);
     }
-    
+
+#ifdef PLATFORM_LINUX    
     try {
         mControlGroup->createSubgroup(sgName, bytes, bytes, localCores);
         p.mCGroupExists = true;
@@ -364,6 +376,7 @@ void ProcessManager:: createControlSubgroup(Process& p)
         // TODO this should be fatal once we're enforcing things. It is probably a misconfigured
         // cgroups environment.
     }
+#endif
 }
 
 
@@ -371,6 +384,7 @@ void ProcessManager::addChildToSubgroup(Process& p)
 {
     if (!p.mCGroupExists) return;
 
+#ifdef PLATFORM_LINUX
     const std::string sgName = subgroupName(p);
     try {
        mControlGroup->addSelfSubgroup(sgName);
@@ -379,12 +393,14 @@ void ProcessManager::addChildToSubgroup(Process& p)
                     log::Session(p.sessionId().toString()) <<
                     "Error adding process to cgroup " << sgName << " : " << err.what());
     }
+#endif
 }
 
 void ProcessManager::destroyControlSubgroup(Process& p)
 {
     if (!p.mCGroupExists) return;
 
+#ifdef PLATFORM_LINUX
     const std::string sgName = subgroupName(p);
     try {
         mControlGroup->destroySubgroup(sgName);
@@ -394,12 +410,14 @@ void ProcessManager::destroyControlSubgroup(Process& p)
                     log::Session(p.sessionId().toString()) <<
                     "Error destroying cgroup " << sgName << " : " << err.what());
     }
+#endif
 }
 
 // runs in a thread to monitor for child processes that
 // generate an out-of-memory condition 
 void ProcessManager::oomMonitorProc()
 {
+#ifdef PLATFORM_LINUX
     log::Logger::instance().setThreadName("process out-of-memory monitor");
     std::vector<std::string> groups;
     while (mRunThreads) {
@@ -407,12 +425,14 @@ void ProcessManager::oomMonitorProc()
             handleOomCondition(groups);
         }
     }
+#endif
 }
 
 // handle out-of-memory conditions. groups
 // is a vector of control subgroups
 void ProcessManager::handleOomCondition(const std::vector<std::string>& groups)
 {
+#ifdef PLATFORM_LINUX
     for (size_t i=0; i < groups.size(); i++) {
         std::string group = groups[i];
         ARRAS_INFO(log::Id("computationOutOfMemory") << 
@@ -466,6 +486,7 @@ void ProcessManager::handleOomCondition(const std::vector<std::string>& groups)
             mControlGroup->monitorOomSubgroup(group, false);
         }
     }
+#endif // PLATFORM_LINUX
 }
 
 //------------------------------------------------------------------------

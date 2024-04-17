@@ -83,6 +83,9 @@ size_t InStreamImpl::read(double& val)             { return read(&val,sizeof(val
 size_t InStreamImpl::read(api::UUID& val)          { return read(&val,sizeof(val)); }
 size_t InStreamImpl::read(api::ArrasTime& val)     { return read(&val,sizeof(val)); }
 size_t InStreamImpl::read(api::Address& val)       { return read(&val,sizeof(val)); }
+#ifdef PLATFORM_APPLE
+size_t InStreamImpl::read(unsigned long& val)      { return read(&val,sizeof(val)); }
+#endif
 
 size_t OutStreamImpl::write(bool val)                  { return write(&val,sizeof(val)); }
 size_t OutStreamImpl::write(int8_t val)                { return write(&val,sizeof(val)); }
@@ -98,7 +101,9 @@ size_t OutStreamImpl::write(double val)                { return write(&val,sizeo
 size_t OutStreamImpl::write(const api::UUID& val)      { return write(&val,sizeof(val)); }
 size_t OutStreamImpl::write(const api::ArrasTime& val) { return write(&val,sizeof(val)); }
 size_t OutStreamImpl::write(const api::Address& val)   { return write(&val,sizeof(val)); }
-
+#ifdef PLATFORM_APPLE
+    size_t OutStreamImpl::write(unsigned long val)         { return write(&val,sizeof(val)); }
+#endif
 namespace {
 
 // helper functions to read and write strings using a count field of type LengthType 

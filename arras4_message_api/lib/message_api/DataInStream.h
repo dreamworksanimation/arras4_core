@@ -7,6 +7,7 @@
 #include "messageapi_types.h"
 #include <cstdint>
 #include <string>
+#include <cassert>
 
 namespace arras4
 {
@@ -22,7 +23,7 @@ class DataInStream
 public:
     virtual ~DataInStream() {}
     virtual size_t read(void* aBuf, size_t aLen)=0;
-    virtual size_t skip(size_t aLen)=0; 
+    virtual size_t skip(size_t aLen)=0;
     virtual size_t bytesRead() const=0;
 
     virtual size_t read(bool& val)=0;
@@ -41,17 +42,23 @@ public:
     virtual size_t read(UUID& uuid)=0;
     virtual size_t read(ArrasTime& time)=0;
     virtual size_t read(Address& address)=0;
+
+#ifdef PLATFORM_APPLE
+    // Apple clang version 15.0.0 sees the below as being ambiguous mapped to the above. Make it explicit
+    static_assert(sizeof(unsigned long) == sizeof(uint64_t));
+    virtual size_t read(unsigned long& val)=0;
+#endif
 };
-    
+
 // alternate interface using >> operator
-template <typename T> DataInStream& operator>>(DataInStream& is, T& val)                 
-{ 
-    is.read(val); 
-    return is; 
+template <typename T> DataInStream& operator>>(DataInStream& is, T& val)
+{
+    is.read(val);
+    return is;
 }
 
-} 
-} 
+}
+}
 
 #endif // __ARRAS_DATAINSTREAM_H__
 

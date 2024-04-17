@@ -31,8 +31,8 @@ public:
 
     ~ControlMessage() {}
 
-    void serialize(api::DataOutStream& to) const;
-    void deserialize(api::DataInStream& from, unsigned version);
+    void serialize(api::DataOutStream& to) const override;
+    void deserialize(api::DataInStream& from, unsigned version) override;
 
     const std::string& command() const { return mCommand; }
     const std::string& data() const { return mData; }

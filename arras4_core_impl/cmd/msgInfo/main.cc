@@ -24,6 +24,10 @@ using namespace arras4::api;
 using namespace arras4::impl;
 using namespace arras4::network;
 
+#ifdef PLATFORM_APPLE
+    #define stat64 stat
+#endif
+
 const int EXIT_ERROR = -1;
 const std::string MSG_EXT(".msg");
 

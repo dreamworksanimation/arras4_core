@@ -5,7 +5,10 @@
 #include "ComputationLoadError.h"
 #include <arras4_log/LogEventStream.h>
 #include <computation_api/Computation.h>
+
+#ifdef PLATFORM_LINUX
 #include <link.h>
+#endif
 
 #include <iostream>
 #include <dlfcn.h>
@@ -23,6 +26,7 @@ struct LibData {
    void* searchAddress;
 };
 
+#ifdef PLATFORM_LINUX
 int
 dl_iterate_callback_find_address(struct dl_phdr_info *info, size_t, void *ptr)
 {
@@ -61,7 +65,7 @@ get_library_path(void* function_address = nullptr)
 
     return libData.libraryPath;
 }
-
+#endif // PLATFORM_LINUX
 }
 
 namespace arras4 {
@@ -90,8 +94,10 @@ ComputationHandle::ComputationHandle(const std::string& dsoName,
         throw ComputationLoadError(msg);
     }
 
+#ifdef PLATFORM_LINUX
     std::string fullPath = get_library_path(reinterpret_cast<void*>(createFunc));
     ARRAS_DEBUG(std::string("Computation dso path: ") << fullPath);
+#endif
 
     mComputation = createFunc(env);
     if (!mComputation) {

@@ -679,7 +679,7 @@ main(int argc, char* argv[])
             session.mId = sessionIdStr;
             sessionVector.push_back(session);;
              getLogs( logs, sessionVector, 2000);
-             int size = sessionVector[0].mLogLines.size();
+             size_t size = sessionVector[0].mLogLines.size();
              if (size > 0) {
                 printf("******************************************************************************\n");
                 printf("******* Start of logs for session %s *******\n", sessionIdStr.c_str());

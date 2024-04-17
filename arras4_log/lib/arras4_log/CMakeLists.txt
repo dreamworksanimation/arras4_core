@@ -9,28 +9,35 @@ set(ExportGroup ${PROJECT_NAME}Targets)
 add_library(${LibName} SHARED "")
 add_library(${PROJECT_NAME}::${LibName} ALIAS ${LibName})
 
+if(IsLinuxPlatform)
+    set(PlatformSpecificSources
+            AutoLogger.cc
+            SyslogLogger.cc)
+endif()
+
 target_sources(${LibName}
     PRIVATE
-        AutoLogger.cc
         ConsoleLogger.cc
         LogEventStream.cc
         Logger.cc
         StreamLogger.cc
-        SyslogLogger.cc
+        ${PlatformSpecificSources}
 )
 
 set_property(TARGET ${LibName}
     PROPERTY PUBLIC_HEADER
+        log_platform.h
         AutoLogger.h
         ConsoleLogger.h
+        log_platform.h
         LogEventStream.h
         Logger.h
         StreamLogger.h
         SyslogLogger.h
 )
 
-target_include_directories(${LibName} 
-    PUBLIC 
+target_include_directories(${LibName}
+    PUBLIC
         $<BUILD_INTERFACE:${BuildIncludeDir}>
         $<INSTALL_INTERFACE:include>)
 

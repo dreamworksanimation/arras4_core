@@ -4,6 +4,8 @@
 #ifndef __ARRAS_LOGEVENTSTREAM_H__
 #define __ARRAS_LOGEVENTSTREAM_H__
 
+#include "log_platform.h"
+
 #include "Logger.h"
 
 namespace arras4 {
@@ -36,7 +38,7 @@ inline LogEvent& operator<<(LogEvent& evt,const Module& x) {
     evt.module() = x.mModule; return evt;
 }
 
-extern Module Arras;
+extern LOG_EXPORT Module Arras;
 
 }
 }
@@ -60,7 +62,7 @@ extern Module Arras;
 #define ARRAS_DEBUG(M) ALOG_DEBUG(::arras4::log::Arras << M)
 #define ARRAS_ATHENA_TRACE(L,M) ATHENA_TRACE(L,::arras4::log::Arras << M)
 
-#if defined(DEBUG)
+#ifdef DEBUG
     #define ALOG_TRACE(M) ALOG(::arras4::log::Logger::LOG_TRACE, M);
     #define ARRAS_TRACE(M) ALOG_TRACE(::arras4::log::Arras << M);
 #else // DEBUG

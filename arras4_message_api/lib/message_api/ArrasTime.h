@@ -75,7 +75,10 @@ public:
     // return string for use as a filename timestamp
     // dd-mm-yy_hh:mm:ss.uuuuuu
     std::string filenameStr() const;
+
+#ifdef PLATFORM_UNIX
     bool fromFilename(const std::string& s);
+#endif
 
 };
 

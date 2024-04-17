@@ -7,6 +7,7 @@
 #include "messageapi_types.h"
 #include <cstdint>
 #include <string>
+#include <cassert>
 
 namespace arras4
 {
@@ -46,15 +47,21 @@ public:
     virtual size_t write(const UUID& uuid)=0;
     virtual size_t write(const ArrasTime& time)=0;
     virtual size_t write(const Address& address)=0;
+
+#ifdef PLATFORM_APPLE
+    // Apple clang version 15.0.0 sees the below as being ambiguous mapped to the above. Make it explicit
+    static_assert(sizeof(unsigned long) == sizeof(uint64_t));
+    virtual size_t write(unsigned long val)=0;
+#endif
 };
 
 // alternate interface using << operator
-template <typename T> DataOutStream& operator<<(DataOutStream& os,T val)                 
-{ 
-    os.write(val); 
-    return os; 
+template <typename T> DataOutStream& operator<<(DataOutStream& os,T val)
+{
+    os.write(val);
+    return os;
 }
 
-} 
-} 
+}
+}
 #endif

@@ -28,8 +28,10 @@
 #include <network/PeerException.h>
 #include <network/Buffer.h>
 
+#ifdef FEATURE_LOCAL_SESSIONS
 #include <client/local/LocalSession.h>
 #include <client/local/SessionNotification.h>
+#endif
 
 #include <http/http_types.h>
 #include <http/HttpResponse.h>
@@ -37,7 +39,6 @@
 
 #include <shared_impl/Platform.h>
 
-#include <boost/filesystem.hpp>
 
 #include <algorithm>
 #include <cassert>
@@ -45,8 +46,17 @@
 #include <sstream>
 #include <fstream>
 
-#if (!defined(ARRAS_WINDOWS))
+#ifdef PLATFORM_WINDOWS
+
+#define WIN32_LEAN_AND_MEAN 1
+#define NOMINMAX 1
+#include <windows.h>
+
+#else
+
 #include <unistd.h> // usleep
+#include <sys/stat.h> // mkdir
+
 #endif
 
 
@@ -139,6 +149,8 @@ using namespace arras4::impl;
 namespace arras4 {
     namespace client {
 
+#ifdef FEATURE_LOCAL_SESSIONS
+
 /* static */ ProcessManager& Client::processManager()
 {
     static ProcessManager pm(0,false,false,false,false);
@@ -151,16 +163,26 @@ namespace arras4 {
     return ls;
 }
 
+#endif
+
+#ifdef FEATURE_PROGRESS_SENDER
 /* static */ ProgressSender& Client::progressSender()
 {
     static ProgressSender ps(processManager());
     return ps;
 }
+#endif
 
-const std::string Client::defaultUserAgent("Arras Native Client");
+#ifndef PLATFORM_WINDOWS
+const std::string Client::defaultUserAgent(DEFAULT_USER_AGENT);
+#endif
 
 Client::Client()
+#ifdef PLATFORM_WINDOWS
+    : Client(DEFAULT_USER_AGENT)
+#else
     : Client(defaultUserAgent)
+#endif
 {
 }
 
@@ -179,9 +201,11 @@ Client::Client(const std::string& aUserAgent)
 Client::~Client()
 {
     disconnect();
+#ifdef FEATURE_LOCAL_SESSIONS
     if (mIsLocal) {
-	localSessions().abandonSession(api::UUID(mSessionId));
+	    localSessions().abandonSession(api::UUID(mSessionId));
     }
+#endif
 }
 
 void
@@ -207,10 +231,12 @@ Client::removeExceptionCallback(const ExceptionCallback& callback)
 {
     auto del = callback.target<void(*)(const std::exception&)>();
     for (auto it = mExceptionCallbacks.begin();
-         it != mExceptionCallbacks.end(); ++it) {
+         it != mExceptionCallbacks.end();) {
         auto f1 = (*it).target<void(*)(const std::exception&)>();
         if (!f1 || (f1 && del && *f1 == *del)) {
             it = mExceptionCallbacks.erase(it);
+        } else {
+            ++it;
         }
     }
 }
@@ -488,11 +514,13 @@ Client::sendShutdownMessage()
 void 
 Client::shutdownLocal()
 {
+#ifdef FEATURE_LOCAL_SESSIONS
   try {
       localSessions().stopSession(api::UUID(mSessionId));
   } catch (std::exception& e) {
       throw ClientException("Failed to delete local session: " + std::string(e.what()));
   }
+#endif
   setState(STATE_DISCONNECTING);
 }
 
@@ -593,15 +621,19 @@ Client::waitForDisconnect(unsigned maxSeconds) const
 void
 Client::pause()
 {
+#ifdef FEATURE_LOCAL_SESSIONS
     // todo: not yet implemented for distributed sessions
     if (mIsLocal) localSessions().pauseSession(mSessionId);
+#endif
 }
 
 void
 Client::resume()
 {
+#ifdef FEATURE_LOCAL_SESSIONS
     // todo: not yet implemented for distributed session
     if (mIsLocal) localSessions().resumeSession(mSessionId);
+#endif
 }
 
 int
@@ -657,7 +689,11 @@ Client::makeCreateRequest(const SessionDefinition& aDefinition,
     reqObj["brief_version"] = info.mBriefVersion;
     reqObj["brief_distribution"] = info.mBriefDistribution;
 
+#ifdef PLATFORM_WINDOWS
+    reqObj["pid"] = (unsigned long long)GetCurrentProcessId();
+#else
     reqObj["pid"] = getpid();
+#endif
 
     reqObj["username"] = username;
 
@@ -768,6 +804,7 @@ Client::createSession(const SessionDefinition& aDefinition,
 
     bool local = forceLocal || (aUrl == LOCAL_SESSION_URL);
 
+#ifdef FEATURE_PROGRESS_SENDER
     // initialize progress GUI
     // - set to aSessionOptions' id if it's not empty, else 
     //   generate a progress id (can't use Arras session id, since
@@ -786,11 +823,12 @@ Client::createSession(const SessionDefinition& aDefinition,
     progMsg["status"] = "pending";
     progMsg["progress"] = "";
     progressSender().progress(progMsg);
+#endif
 
     if (local) {
-	return createLocal(aDefinition,aSessionOptions);
+	    return createLocal(aDefinition,aSessionOptions);
     } else {
-	return createDistributed(aDefinition,aUrl,aSessionOptions);
+	    return createDistributed(aDefinition,aUrl,aSessionOptions);
     }
 }
 
@@ -814,7 +852,7 @@ std::string
 Client::createLocal(const SessionDefinition& aDefinition,
 		    const SessionOptions& aSessionOptions)
 {
-    
+#ifdef FEATURE_LOCAL_SESSIONS
     std::shared_ptr<LocalSession> sp;
     std::string error("Failed to create local session");
 
@@ -829,16 +867,16 @@ Client::createLocal(const SessionDefinition& aDefinition,
         new SessionNotification(aDefinition.getObject(),sessionOptions,
                                 sessionId, mUserAgent);
 
-	sp = localSessions().createSession(aDefinition.getObject(), sessionId,
+	    sp = localSessions().createSession(aDefinition.getObject(), sessionId,
 					  std::bind(&Client::localTermination,this,
 						    std::placeholders::_1, std::placeholders::_2));
     } catch (std::exception& e) {
-	error += std::string(" :") + e.what();
+	    error += std::string(" :") + e.what();
     }
     if (!sp) {
-	progress("Creation failed","failed");
-	progressInfo("errors",error);
-	throw ClientException(error);
+	    progress("Creation failed","failed");
+	    progressInfo("errors",error);
+	    throw ClientException(error);
     }
 
     mSessionId = sp->address().session.toString();
@@ -869,44 +907,56 @@ Client::createLocal(const SessionDefinition& aDefinition,
 		       mSessionId << " local " << getClientVersion());
 
     return mSessionId;
+
+#else // ifdef FEATURE_LOCAL_SESSIONS
+    throw ClientException("local sessions are not supported by this client");
+#endif
 }
 
 void 
 Client::logLocal(const SessionDefinition& aDefinition,
 		 const SessionOptions& aSessionOptions)
 {
+
+#ifdef FEATURE_LOCAL_SESSIONS
+    
     // writes a log line to the user's home dir
     const char* home = std::getenv("HOME");
     if (home == nullptr) {
-	ARRAS_WARN(log::Id("LocalLogFailed") <<
+	    ARRAS_WARN(log::Id("LocalLogFailed") <<
 		   "Cannot log local session : $HOME is not defined");
-	return;
+	    return;
     }
     std::string username("unknown_user");
     const char* logname = std::getenv("LOGNAME");
     if (logname != nullptr) username = logname;
     std::string sessname("unnamed_session");
     if (aDefinition.getObject()["name"].isString()) {
-	sessname = aDefinition.getObject()["name"].asString();
+	    sessname = aDefinition.getObject()["name"].asString();
     }
 
     try {
-	boost::filesystem::path logfile(home);
-	logfile /= LOCAL_LOG_DIR;
-	boost::filesystem::create_directory(logfile);
-	logfile /= LOCAL_LOG_NAME;
-	std::ofstream stream(logfile.c_str(),std::ios_base::app);
-	stream << api::ArrasTime::now().dateTimeStr() << " " << username << " " << sessname << " " <<
-	    mSessionId << " Sq " << aSessionOptions.getSequence() << " S " << aSessionOptions.getShot() <<
-	    " AssGrp " << aSessionOptions.getAssetGroup() << " Ass " << aSessionOptions.getAsset() << std::endl;
-	stream.close();
+	    std::string logfile(home);
+	    logfile += "/"; // currently Linux only
+        logfile += LOCAL_LOG_DIR;
+	    mkdir(logfile.c_str(),0777);
+	    logfile += "/";
+        logfile += LOCAL_LOG_NAME;
+	    std::ofstream stream(logfile.c_str(),std::ios_base::app);
+	    stream << api::ArrasTime::now().dateTimeStr() << " " << username << " " << sessname << " " <<
+	        mSessionId << " Sq " << aSessionOptions.getSequence() << " S " << aSessionOptions.getShot() <<
+	        " AssGrp " << aSessionOptions.getAssetGroup() << " Ass " << aSessionOptions.getAsset() << std::endl;
+	    stream.close();
     } catch (std::exception &e) {
-	ARRAS_WARN(log::Id("LocalLogFailed") <<
+	    ARRAS_WARN(log::Id("LocalLogFailed") <<
 		   "Cannot log local session : " << e.what());
     } catch (...) {
-	ARRAS_WARN(log::Id("LocalLogFailed") <<
+	    ARRAS_WARN(log::Id("LocalLogFailed") <<
 		   "Cannot log local session : Unknown exception");
     }
+
+#endif
+
 }
 	
 	    
@@ -919,10 +969,15 @@ Client::createDistributed(const SessionDefinition& aDefinition,
     PlatformInfo info;
     getPlatformInfo(info);
       
+#ifdef PLATFORM_WINDOWS
+    const char* logname = std::getenv("USERNAME");
+#else
     const char* logname = std::getenv("LOGNAME");
+#endif
+
     if (logname == nullptr) {
-	progress("Request error");
-	progressInfo("errors","Unable to determine the current user's login name");
+	    progress("Request error");
+	    progressInfo("errors","Unable to determine the current user's login name");
         throw ClientException("Unable to determine the current user's login name",
                               ClientException::GENERAL_ERROR);
     }
@@ -1184,16 +1239,16 @@ Client::deliverMessages()
                            " (client) " <<
                            env.metadata()->routingName());
 
-        if (msg.classId() == EngineReadyMessage::ID) {
+        if (msg.classId() == EngineReadyMessage::CLASS_ID()) {
             mEngineReady = true;
             for (auto it = mComponents.begin(); it != mComponents.end(); ++it) {
                 if (*it) (*it)->onEngineReady();
             }
-        } else if (msg.classId() == SessionStatusMessage::ID) {
+        } else if (msg.classId() == SessionStatusMessage::CLASS_ID()) {
             for (auto it = mComponents.begin(); it != mComponents.end(); ++it) {
                 if (*it) (*it)->onStatusMessage(msg);
             }
-        } else if (msg.classId() != ExecutorHeartbeat::ID) {
+        } else if (msg.classId() != ExecutorHeartbeat::CLASS_ID()) {
 	    // ExecutorHeartbeat 
             for (auto it = mComponents.begin(); it != mComponents.end(); ++it) {
                 if (*it) (*it)->onMessage(msg);
@@ -1302,11 +1357,13 @@ Client::endpoint()
 void 
 Client::progress(const std::string& stage, unsigned percent)
 {
+#ifdef FEATURE_PROGRESS_SENDER
     api::Object msg;
     msg["id"] = mProgressId;
     msg["stage"] = stage;
     msg["progress.percent"] = percent;
     progressSender().progress(msg);
+#endif
 }
     
 void 
@@ -1314,17 +1371,20 @@ Client::progress(const std::string& stage,
 		 const std::string& status,
 		 const std::string& text)
 {
+#ifdef FEATURE_PROGRESS_SENDER
     api::Object msg;
     msg["id"] = mProgressId;
     msg["stage"] = stage;
     msg["status"] = status;
     msg["progress"] = text;
     progressSender().progress(msg);
+#endif
 }
 
 void Client::progressInfo(const std::string& category,
 			  api::ObjectConstRef value)
 {
+#ifdef FEATURE_PROGRESS_SENDER   
     api::Object msg;
     msg["id"] = mProgressId;
     msg["addinfo"]["category"] = category;
@@ -1334,6 +1394,7 @@ void Client::progressInfo(const std::string& category,
         msg["addinfo"]["value"] = value;
     }
     progressSender().progress(msg);
+#endif
 }
 
 }

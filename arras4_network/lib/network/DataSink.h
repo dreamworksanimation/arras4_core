@@ -6,6 +6,7 @@
 
 #include "network_types.h"
 #include <cstddef>
+#include <string>
 
 namespace arras4
 {

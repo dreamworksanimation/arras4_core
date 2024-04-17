@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "dependencies": [
+    "boost-system",
+    "boost-chrono",
+    "boost-date-time",
+    "boost-filesystem",
+    "boost-program-options",
+    "curl",
+    "libmicrohttpd",
+    "jsoncpp",
+    "openssl",
+    "cppunit"
+  ]
+}

@@ -5,9 +5,19 @@
 #include <assert.h>
 #include <iostream>
 #include <sys/types.h>
-#include <sys/time.h>
 #include <stdio.h>
+
+#ifdef PLATFORM_WINDOWS
+
+#define WIN32_LEAN_AND_MEAN 1
+#include "windows.h"
+
+#else
+
+#include <sys/time.h>
 #include <unistd.h>
+
+#endif
 
 namespace arras4 {
     namespace log {
@@ -16,7 +26,11 @@ ConsoleLogger::ConsoleLogger(const std::string& aProcessName)
     : Logger(aProcessName),
       mTimeLogging(true),
       mDateLogging(true),
+#ifdef PLATFORM_WINDOWS
+      mUseColor(false),
+#else
       mUseColor(true),
+#endif
       mOutStream(&std::cout),
       mErrStream(&std::cerr)
 {
@@ -74,13 +88,8 @@ static const char* sColors[] = {
 
 static const char* sResetColor = "\033[0m";
 
-void ConsoleLogger::log(Level level, const char *message)
+void ConsoleLogger::log(Level level, const char* message)
 {
-    timeval now;
-    gettimeofday(&now, NULL);
-
-    pid_t pid = getpid();
-
     // accumulate everything into a string and
     // then print is as a single string to prevent
     // interleaving of log line components between
@@ -90,6 +99,43 @@ void ConsoleLogger::log(Level level, const char *message)
         if (mUseColor) {
             s << sColors[level];
         }
+
+#ifdef PLATFORM_WINDOWS
+        if (mTimeLogging || mDateLogging) {
+
+            SYSTEMTIME now;
+            GetLocalTime(&now);
+
+            if (mDateLogging) {
+                char d[10 + 1];
+                // yyyy/mm/dd
+                snprintf(d, sizeof(d), "%d-%02d-%02d",
+                    now.wYear,
+                    now.wMonth,
+                    now.wDay);
+
+                s << d << " ";
+            }
+
+            if (mTimeLogging) {
+                char t[12 + 1];
+                // hh:mm:ss:MMM
+                snprintf(t, sizeof(t), "%02d:%02d:%02d,%03ld",
+                    now.wHour,
+                    now.wMinute,
+                    now.wSecond,
+                    now.wMilliseconds);
+                s << t << " ";
+            }
+        }
+
+        s << sTypes[level] << mProcessName << "[" << GetCurrentProcessId() << "]: ";
+
+#else
+
+        timeval now;
+        gettimeofday(&now, NULL);
+
         if (mTimeLogging || mDateLogging) {
             tm* date = localtime(&now.tv_sec);
 
@@ -120,7 +166,8 @@ void ConsoleLogger::log(Level level, const char *message)
             }
         }
 
-        s << sTypes[level] << mProcessName << "[" << pid << "]: ";
+        s << sTypes[level] << mProcessName << "[" << getpid() << "]: ";
+#endif
     }
     const std::string& threadName = getThreadName();
     if (threadName.length() > 0) {

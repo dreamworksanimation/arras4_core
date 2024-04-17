@@ -208,11 +208,11 @@ namespace arras4 {
              */
             SessionOptions& setMetadata(const std::string& aMetadataJSON);
 
-	     /**
+            /**
              * @return a title for this session, based on sequence/shot/assetgroup/asset
-	     * if all 4 of these are empty, returns "[No Title]"
+             * if all 4 of these are empty, returns "[No Title]"
              */
-	    std::string getTitle() const;
+             std::string getTitle() const;
 
             /**
              * @param aObject Object to append the options to
@@ -229,7 +229,7 @@ namespace arras4 {
             std::string mAsset;
             std::string mDepartment;
             std::string mTeam;
-	    std::string mId;  // client defined key/id string
+            std::string mId;  // client defined key/id string
 
             api::Object mMetadata;
 

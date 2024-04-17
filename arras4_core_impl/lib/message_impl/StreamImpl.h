@@ -38,6 +38,10 @@ public:
     size_t read(api::UUID& uuid);
     size_t read(api::ArrasTime& time);
     size_t read(api::Address& address);
+#ifdef PLATFORM_APPLE
+    size_t read(unsigned long& val);
+#endif
+
 
 protected:
     network::DataSource& mSource;
@@ -70,7 +74,9 @@ public:
     size_t write(const api::UUID& uuid);
     size_t write(const api::ArrasTime& time);
     size_t write(const api::Address& address);
-
+#ifdef PLATFORM_APPLE
+    size_t write(unsigned long val);
+#endif
 
 protected:
     network::DataSink& mSink;

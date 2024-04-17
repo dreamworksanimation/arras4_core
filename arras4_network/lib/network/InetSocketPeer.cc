@@ -1,7 +1,17 @@
 // Copyright 2023-2024 DreamWorks Animation LLC and Intel Corporation
 // SPDX-License-Identifier: Apache-2.0
 
-#include "platform.h"
+#include "network_platform.h"
+
+#ifdef PLATFORM_WINDOWS
+
+#include <winsock2.h>
+#include <BaseTsd.h>
+#include <WS2tcpip.h>
+#include "mstcpip.h"
+typedef SSIZE_T ssize_t;
+
+#else
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -10,6 +20,8 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <sys/types.h>
+
+#endif
 
 #include "InetSocketPeer.h"
 #include "SocketPeer.h"
@@ -21,7 +33,9 @@
 #include <string.h>
 #include <sstream>
 
+#ifdef PLATFORM_LINUX
 #include <linux/un.h>
+#endif
 
 namespace arras4 {
     namespace network {
@@ -67,7 +81,7 @@ InetSocketPeer::listen(unsigned short aPort, int aMaxPendingConnections)
     }
 
     // if this option is set, we are listening on a local UNIX domain socket
-    mSocket = ::socket(AF_INET, SOCK_STREAM | ARRAS_SOCK_CLOEXEC, 0);
+    SOCKET_CREATE(mSocket, AF_INET);
     if (mSocket == ARRAS_INVALID_SOCKET) {
         // save errno before doing anything else
 	int save_errno = getSocketError();
@@ -111,8 +125,12 @@ InetSocketPeer::listen(unsigned short aPort, int aMaxPendingConnections)
         throw PeerException(save_errno, getCodeFromSocketError(save_errno), err);
     }
 
+#ifdef PLATFORM_WINDOWS
+    if (ioctlsocket(mSocket, FIONBIO, (u_long*)&yes) < 0) {
+#else
     if (ioctl(mSocket, FIONBIO, (char*)&yes) < 0) {
 
+#endif
         // this shouldn't get an error unless the operating system drops support
 
         // save errno before doing anything else
@@ -203,7 +221,7 @@ InetSocketPeer::connect(const std::string& aHostname, unsigned short aPort)
     // calling gethostbyname to notice file descriptor exhaustion with a more useful message. gethostbyname
     // could still fail with file descriptor exhaustion in a multi-threaded environment but that will
     // be pretty rare.
-    mSocket = socket(AF_INET, SOCK_STREAM | ARRAS_SOCK_CLOEXEC, 0);
+    SOCKET_CREATE(mSocket, AF_INET);
     if (mSocket == ARRAS_INVALID_SOCKET) {
         // save errno before doing anything else
         int save_errno = getSocketError();
@@ -214,7 +232,7 @@ InetSocketPeer::connect(const std::string& aHostname, unsigned short aPort)
         throw PeerException(save_errno, getCodeFromSocketError(save_errno), err);
     }
 
-    close(mSocket);
+    SOCKET_CLOSE(mSocket);
 
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));
@@ -252,7 +270,8 @@ InetSocketPeer::connect(const std::string& aHostname, unsigned short aPort)
         }
     } while (1);
 
-    mSocket = socket(AF_INET, SOCK_STREAM | ARRAS_SOCK_CLOEXEC, 0);
+    SOCKET_CREATE(mSocket, AF_INET);
+
     if (mSocket == ARRAS_INVALID_SOCKET) {
         // save errno before doing anything else
         int save_errno = getSocketError();

@@ -4,7 +4,7 @@
 #ifndef __ARRAS4_ENCRYPTION_H__
 #define __ARRAS4_ENCRYPTION_H__
 
-#include "platform.h"
+#include "network_platform.h"
 #include <exception>
 #include <memory>
 #include <string>

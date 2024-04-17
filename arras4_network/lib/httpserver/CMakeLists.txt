@@ -19,6 +19,7 @@ target_sources(${LibName}
 set_property(TARGET ${LibName}
     PROPERTY PUBLIC_HEADER
         HttpRequestEvent.h 
+        httpserver_platform.h
         HttpServer.h 
         httpserver_types.h 
         HttpServerException.h 

@@ -4,17 +4,32 @@
 #ifndef __ARRAS4_CLIENT_H__
 #define __ARRAS4_CLIENT_H__
 
+// Features that can be enabled by preprocessor symbols
+// FEATURE_LOCAL_SESSIONS : enables local sessions
+// FEATURE_REZ_RESOLVE :  enables client side REZ resolution
+// FEATURE_PROGRESS_SENDER : enable progress sent to IPC port
+#include "client_api_platform.h"
+
 #include <atomic>
 #include <list>
 #include <memory>
 #include <string>
 #include <thread>
 #include <vector>
+#include <functional>
 
 #include "AcapAPI.h"
-#include "ProgressSender.h"
 
+// this is used by the Windows build, due to problems with exporting data members
+#define DEFAULT_USER_AGENT "Arras Native Client"
+
+#ifdef FEATURE_PROGRESS_SENDER
+#include "ProgressSender.h"
+#endif
+
+#ifdef FEATURE_LOCAL_SESSIONS
 #include <client/local/LocalSessions.h>
+#endif
 
 #include <message_api/messageapi_types.h>
 #include <message_api/Object.h>
@@ -26,7 +41,7 @@ namespace arras4 {
     namespace impl {
         class PeerMessageEndpoint;
         class MessageEndpoint;
-        class PlatformInfo;
+        struct PlatformInfo;
     }
 }
 
@@ -41,10 +56,13 @@ class Client
 public:
     typedef std::function<void(const std::exception&)> ExceptionCallback;
 
-
+#ifdef FEATURE_LOCAL_SESSIONS
     static impl::ProcessManager& processManager();
     static LocalSessions& localSessions();
+#endif
+#ifdef FEATURE_PROGRESS_SENDER
     static ProgressSender& progressSender();
+#endif
 
     Client();
     Client(const std::string& aUserAgent);
@@ -75,9 +93,14 @@ public:
     typedef std::string AcapSessionID;
  
     const std::string requestArrasUrl(const std::string& datacenter="gld", const std::string& environment="prod");
-    static const std::string getArrasUrl_static(const std::string& datacenter="gld", 
-                                                const std::string& environment="prod",
-                                                const std::string& userAgent = defaultUserAgent);
+    static const std::string getArrasUrl_static(
+        const std::string& datacenter="gld", 
+        const std::string& environment="prod",
+#ifdef PLATFORM_WINDOWS
+        const std::string& userAgent = DEFAULT_USER_AGENT);
+#else
+        const std::string& userAgent = defaultUserAgent);
+#endif
 
     /// return true if the given sessionId is found in the arras coordinator
     /// using local server if given empty datacenter or environment.
@@ -225,7 +248,9 @@ protected:
 
 private:
 
+#ifndef PLATFORM_WINDOWS 
     static const std::string defaultUserAgent;
+#endif
 
     // connect to service via raw TCP
     void connectTCP();
@@ -266,7 +291,11 @@ private:
         const std::string& resourcepath,
         const std::string& datacenter,
         const std::string& environment,
+#ifdef PLATFORM_WINDOWS
+        const std::string& userAgent = DEFAULT_USER_AGENT);
+#else
         const std::string& userAgent = defaultUserAgent);
+#endif
 
     /// Returns the coordinator endpoint.
     const std::string getCoordinatorEndpoint(

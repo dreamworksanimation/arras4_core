@@ -23,8 +23,8 @@ public:
     PongMessage() : mTimeSecs(0),mTimeMicroSecs(0) {}
     ~PongMessage() {}
 
-    void serialize(arras4::api::DataOutStream& to) const;
-    void deserialize(arras4::api::DataInStream& from, unsigned version);
+    void serialize(arras4::api::DataOutStream& to) const override;
+    void deserialize(arras4::api::DataInStream& from, unsigned version) override;
 
     const api::UUID& sourceId() const { return mSourceId; }
     void setSourceId(const api::UUID& id) { mSourceId = id; }

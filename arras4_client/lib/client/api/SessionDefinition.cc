@@ -6,10 +6,16 @@
 #include <arras4_log/Logger.h>
 #include <arras4_log/LogEventStream.h>
 
+#include "client_api_platform.h"
+
 #include <cstdlib>
 #include <fstream>
-#include <unistd.h>
 
+#ifdef PLATFORM_WINDOWS
+#include <io.h> // _access
+#else
+#include <unistd.h>
+#endif
 
 
 namespace arras4 {
@@ -37,7 +43,11 @@ std::string findFile(const std::string& filename,
             std::string directory = filepath.substr(start, done ? end : end-start);
 
             std::string path = directory + '/' + filename;
+#ifdef PLATFORM_WINDOWS
+            if (_access(path.c_str(), 4) != -1) {
+#else
             if (access(path.c_str(), R_OK) != -1) {
+#endif
                 return path;
             }
         }

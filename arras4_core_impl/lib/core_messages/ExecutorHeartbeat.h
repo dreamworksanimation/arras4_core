@@ -35,12 +35,12 @@ public:
   
     ~ExecutorHeartbeat() {}
 
-    void serialize(arras4::api::DataOutStream& to) const;
-    void deserialize(arras4::api::DataInStream& from, unsigned version);
+    void serialize(arras4::api::DataOutStream& to) const override;
+    void deserialize(arras4::api::DataInStream& from, unsigned version) override;
 
     // when was the heartbeat message sent
-    unsigned long mTransmitSecs;
-    unsigned int mTransmitMicroSecs;
+    uint64_t mTransmitSecs;
+    uint64_t mTransmitMicroSecs;
 
     // cpu usage
     unsigned short mThreads;
@@ -53,12 +53,12 @@ public:
     size_t mMemoryUsageBytesCurrent;
 
     // messages sent
-    unsigned long mSentMessages5Sec;
-    unsigned long mSentMessages60Sec;
-    unsigned long mSentMessagesTotal;
-    unsigned long mReceivedMessages5Sec;
-    unsigned long mReceivedMessages60Sec;
-    unsigned long mReceivedMessagesTotal;
+    uint64_t mSentMessages5Sec;
+    uint64_t mSentMessages60Sec;
+    uint64_t mSentMessagesTotal;
+    uint64_t mReceivedMessages5Sec;
+    uint64_t mReceivedMessages60Sec;
+    uint64_t mReceivedMessagesTotal;
 
     // optional computation status
     std::string mStatus;

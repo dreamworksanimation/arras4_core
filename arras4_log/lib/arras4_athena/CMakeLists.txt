@@ -19,14 +19,25 @@ set_property(TARGET ${LibName}
     PROPERTY PUBLIC_HEADER
         AthenaLogger.h
         UdpSyslog.h
+        athena_platform.h
+        UdpSyslog_boost.h
+        UdpSyslog_noboost.h
 )
+
+if(IsUnixPlatform) # Linux/Darwin
+    set(PlatformSpecificLibs Boost::date_time Boost::system)
+elseif(IsWindowsPlatform)
+    set(PlatformSpecificLibs ws2_32)
+endif()
 
 target_link_libraries(${LibName}
     PUBLIC
-        ${PROJECT_NAME}::arras4_log Boost::date_time Boost::system)
+        ${PROJECT_NAME}::arras4_log
+        ${PlatformSpecificLibs}
+)
 
-target_include_directories(${LibName} 
-    PUBLIC 
+target_include_directories(${LibName}
+    PUBLIC
         $<BUILD_INTERFACE:${BuildIncludeDir}>
         $<INSTALL_INTERFACE:include>)
 

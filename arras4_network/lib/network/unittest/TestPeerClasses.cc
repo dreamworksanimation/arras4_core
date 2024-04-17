@@ -22,7 +22,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#if defined(__ICC)
+#ifdef __ICC
 #define ARRAS_START_THREADSAFE_STATIC_WRITE       __pragma(warning(disable:1711))
 #define ARRAS_FINISH_THREADSAFE_STATIC_WRITE __pragma(warning(default:1711))
 #else
@@ -55,7 +55,6 @@ using arras4::network::InetSocketPeer;
 using arras4::network::SocketPeer;
 using arras4::network::InvalidParameterError;
 using arras4::network::PeerException;
-using arras4::ARRAS_INVALID_SOCKET;
 
 bool serverDone = false;
 char* serverIPCName = nullptr;

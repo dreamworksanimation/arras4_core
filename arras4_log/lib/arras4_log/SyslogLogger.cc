@@ -33,7 +33,10 @@ static int sPriorities[] = {
 
 void SyslogLogger::log(Level level, const char *message)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat-security"
     syslog(sPriorities[level], message);
+#pragma clang diagnostic pop
 }
 
 }

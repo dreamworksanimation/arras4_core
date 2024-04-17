@@ -490,16 +490,26 @@ SDK::endpoint()
 SDK::resolveRez(api::ObjectRef rezSettings,
 		   std::string& err)
 {
+#ifdef FEATURE_REZ_RESOLVE
     return client::rezResolve(client::Client::processManager(),
 			      rezSettings, err);
+#else
+    err = "This client doesn't support REZ resolution";
+    return "error";
+#endif
 }
 
 /*static*/ bool 
 SDK::resolveRez(client::SessionDefinition& def,
 		std::string& err)
 {
+#ifdef FEATURE_REZ_RESOLVE
     return client::rezResolve(client::Client::processManager(),
 			      def, err);
+#else
+    err = "This client doesn't support REZ resolution";
+    return false;
+#endif
 }
     
 void 
@@ -526,13 +536,17 @@ SDK::progressInfo(const std::string& category,
 /* static */ void
 SDK::setProgressAutoExecCmd(const std::string& cmd) 
 {
+#ifdef FEATURE_PROGRESS_SENDER
     client::Client::progressSender().setAutoExecCmd(cmd);
+#endif
 }
 
 /* static */ void
 SDK::setProgressChannel(const std::string& channel) 
 {
+#ifdef FEATURE_PROGRESS_SENDER
     client::Client::progressSender().setChannel(channel);
+#endif
 }
 
 

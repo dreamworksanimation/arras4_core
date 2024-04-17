@@ -17,7 +17,9 @@ namespace arras4 {
 
 // ExecutionLimits defines low-level system parameters
 // that affect execution of a computation, like whether to
-// use hyperthreading or maximum memory usage. 
+// use hyperthreading or maximum memory usage.
+//
+// CPU affinity is not implemented in the Windows version
 class ExecutionLimits
 {
 public:
@@ -87,7 +89,9 @@ public:
     bool usesHyperthreads() const { return mThreadsPerCore > 1; }
 
     //NOTE: the current node impl needs this : doesn't seem like it should be exposed..
+#ifdef PLATFORM_LINUX
     static bool setAffinityForProcess(const cpu_set_t& cpuSet, pid_t pid);
+#endif
 
 private:
 
@@ -103,7 +107,9 @@ private:
     // specified in cpuSet using cpu affinity
     bool mUseAffinity;
     // the set of cpus to use, if mUseAffinity is true.
+#ifdef PLATFORM_LINUX
     cpu_set_t mCpuSet;
+#endif
 };
 
 }

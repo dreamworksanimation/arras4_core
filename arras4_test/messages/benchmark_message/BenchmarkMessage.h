@@ -31,8 +31,8 @@ public:
     BenchmarkMessage(MessageType type, const std::string& value=std::string(), const std::string& from=std::string());
     ~BenchmarkMessage();
 
-    void serialize(arras4::api::DataOutStream& to) const;
-    void deserialize(arras4::api::DataInStream& from, unsigned version);
+    void serialize(arras4::api::DataOutStream& to) const override;
+    void deserialize(arras4::api::DataInStream& from, unsigned version) override;
 
     MessageType mType;
     std::string mFrom;

@@ -4,6 +4,10 @@
 #include "Environment.h"
 #include <unistd.h>
 
+#ifdef PLATFORM_APPLE
+    extern char** environ;
+#endif
+
 #if defined(JSONCPP_VERSION_MAJOR)
 #define memberName name
 #endif

@@ -20,6 +20,10 @@
 #include <algorithm>
 #include <fstream>
 
+#ifdef PLATFORM_APPLE
+    #define stat64 stat
+#endif
+
 constexpr size_t READBUF_SIZE = 16*1024;
 char READBUF[READBUF_SIZE];
 

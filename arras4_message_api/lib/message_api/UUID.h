@@ -4,6 +4,8 @@
 #ifndef __ARRAS4_UUID__
 #define __ARRAS4_UUID__
 
+#include "message_api_platform.h"
+
 #include <string>
 #include <array>
 #include <iostream>
@@ -17,7 +19,7 @@ namespace arras4 {
 // but direct access to byte data has been added, 
 // and the const char* constructor has been removed
 
-class UUID {
+class MESSAGE_API_EXPORT UUID {
 
 public:
             

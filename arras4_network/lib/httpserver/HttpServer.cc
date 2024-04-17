@@ -1,13 +1,21 @@
 // Copyright 2023-2024 DreamWorks Animation LLC and Intel Corporation
 // SPDX-License-Identifier: Apache-2.0
 
+#include "httpserver_platform.h"
+
 #include "HttpServer.h"
 #include "HttpServerRequest.h"
 #include "HttpServerResponse.h"
 #include "HttpServerException.h"
 
-#include <sys/socket.h>
-#include <netinet/in.h>
+
+#ifdef PLATFORM_WINDOWS
+#include <winsock2.h>
+#include <winerror.h>
+#else
+#include <sys/socket.h> // socket, bind & listen
+#include <netinet/in.h> // sockaddr_in & htons
+#endif
 
 #include <fstream> // ifstream to read ssl cert files
 #include <sstream>
@@ -134,7 +142,7 @@ dispatch(
 
         }
         else if (method == "DELETE") {
-            server->DELETE(*req, *resp);
+            server->HTTPDELETE(*req, *resp);
             rtn = server->_complete(*resp);
 
         } else if (method == "POST" || method == "PUT") {
@@ -253,7 +261,8 @@ HttpServer::HttpServer(unsigned short aListenPort, unsigned int aThreadPoolSize)
 ARRAS_SOCKET HttpServer::createListenSocket(unsigned short& aListenPort)
 {
 
-    ARRAS_SOCKET socket = ::socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
+    ARRAS_SOCKET socket;
+    SOCKET_CREATE(socket,AF_INET);
     if (socket == ARRAS_INVALID_SOCKET) {
         throw HttpServerException("Couldn't create a socket for HTTP server");
     }
@@ -265,20 +274,20 @@ ARRAS_SOCKET HttpServer::createListenSocket(unsigned short& aListenPort)
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
     if (::bind(socket, (struct sockaddr*)&addr, sizeof(addr)) != 0) {
-        close(socket);
+        SOCKET_CLOSE(socket);
         perror("bind");
         throw HttpServerException("Couldn't bind HTTP server socket");
     }
 
     if (::listen(socket, 32)) {
-        close(socket);
+        SOCKET_CLOSE(socket);
         throw HttpServerException("Couldn't listen on HTTP server socket");
     }
 
     if (aListenPort == 0) {
         socklen_t addrSize = sizeof(addr);
         if (getsockname(socket, reinterpret_cast<struct sockaddr*>(&addr), &addrSize) != 0) {
-            close(socket);
+            SOCKET_CLOSE(socket);
             throw HttpServerException("Couldn't get the port from the HTTP server socket");
         }
         aListenPort = ntohs(addr.sin_port);
@@ -313,9 +322,14 @@ HttpServer::HttpServer(unsigned short aListenPort,
         }
     }
 
+#ifdef PLATFORM_APPLE
+    // Apple-TODO: Figure this one out.
+    unsigned int flags = (MHD_USE_SELECT_INTERNALLY ); 
+#else
     unsigned int flags = (MHD_USE_SELECT_INTERNALLY |
                           MHD_USE_EPOLL_LINUX_ONLY |
                           MHD_USE_EPOLL_TURBO);
+#endif
 
     ARRAS_SOCKET socket = createListenSocket(mPort);
 
