@@ -33,8 +33,8 @@ variants = [
 ]
 
 private_build_requires = [
-    'cmake_modules',
-    'cppunit', 
+    'cmake_modules-1.0',
+    'cppunit',
     'gcc-6.3.x|9.3.x|11.x'
 ]
 
