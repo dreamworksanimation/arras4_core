@@ -59,17 +59,10 @@ if(${PROJECT_NAME_UPPER}_BUILD_TESTING)
     find_package(CppUnit REQUIRED)
 endif()
 
-# ================================================
 # Set the RPATH for binaries in the install tree
-# ================================================
 if (IsUnixPlatform)
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-    if (IsDarwinPlatform)
-        set(CMAKE_INSTALL_RPATH "@loader_path/" "@loader_path/../lib")
-    elseif(IsLinuxPlatform)
-        set(CMAKE_INSTALL_RPATH $ORIGIN $ORIGIN/../lib64)
-    endif()
+    set(CMAKE_INSTALL_RPATH ${GLOBAL_INSTALL_RPATH})
 endif()
 
 # if OPT_LEVEL is set use its value to override the CMAKE_BUILD_TYPE because the
