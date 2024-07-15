@@ -41,6 +41,10 @@ int countProcessGroupMembers(pid_t aPgid)
     struct dirent* result = NULL;
     struct dirent entry;
 
+#ifdef __APPLE__
+    return 0;
+#endif
+
     // not being able to open the direction should be impossible unless there is something crazy
     // like no more file handles but handle it for robustness and just use a count of zero.
     DIR* dir = opendir("/proc");

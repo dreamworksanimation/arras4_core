@@ -34,6 +34,7 @@ getPlatformInfo(PlatformInfo& aInfo)
         // use simple pipe stream to get OS distribution info
         const int buff_size = 1024;
         char buff[buff_size] = {0};
+#ifndef PLATFORM_APPLE
         FILE *fp = popen("lsb_release -a", "r");
         int index = 0;
         if (fp != nullptr) {
@@ -57,6 +58,7 @@ getPlatformInfo(PlatformInfo& aInfo)
             }
             pclose(fp);
         }
+#endif
         // make the distribution briefer
         if (aInfo.mBriefDistribution == "RedHatEnterpriseWorkstation") {
             aInfo.mBriefDistribution= "rhat";
