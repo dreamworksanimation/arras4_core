@@ -4,8 +4,9 @@
 #ifndef __ARRAS4_THREADSAFE_QUEUEH__
 #define __ARRAS4_THREADSAFE_QUEUEH__
 
-#include <mutex>
 #include <condition_variable>
+#include <mutex>
+#include <string>
 #include <queue>
 
 namespace arras4 {
@@ -16,20 +17,20 @@ template<typename T>
 class ThreadsafeQueue
 {
 public:
-    ThreadsafeQueue(const std::string& label="Queue") : 
+    ThreadsafeQueue(const std::string& label="Queue") :
         mLabel(label),
         mShutdown(false) {}
     ~ThreadsafeQueue() { shutdown(); }
 
     void push(const T& t);
- 
+
     // pop waits for a a maximum period of 'timeout'
     // for an item to be available on the queue for popping.
     // It returns true if an item was available before the timeout
     // and was placed in 't', or false if the timeout expired
     // and 't' was left unchanged..
     //
-    // passing a timeout of zero blocks indefinitely until an 
+    // passing a timeout of zero blocks indefinitely until an
     // item is available, and therefore always returns true
     bool pop(T& env,
              const std::chrono::microseconds& timeout =
@@ -42,13 +43,13 @@ public:
                         std::chrono::microseconds::zero());
 
     // when shutdown is called, waiting push and pop
-    // calls will unblock and throw ShutdownException 
+    // calls will unblock and throw ShutdownException
     // soon after the shutdown call.
     // future calls to push/pop will immediately throw
     // the exception
     void shutdown();
 
-    
+
 
 private:
     std::queue<T> mQueue;
