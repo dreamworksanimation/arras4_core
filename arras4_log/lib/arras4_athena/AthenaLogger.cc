@@ -137,11 +137,11 @@ AthenaLogger::log_internal(Level level, const char* message)
 #endif
 
     // log message requires microsecond precision
-    long long millis = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+    long long micros = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count();
     s << std::setfill('0')
         << std::put_time(&now_tm, "%FT%H:%M:")
-        << std::setw(2) << (millis / 1000) % 60 << '.'
-        << std::setw(3) << millis % 1000;
+        << std::setw(2) << (micros / 1000000) % 60 << '.'
+        << std::setw(6) << micros % 1000000;
     
     // add level, process, thread and session
 #ifdef PLATFORM_WINDOWS
