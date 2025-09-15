@@ -1,7 +1,7 @@
 # Copyright 2023-2024 DreamWorks Animation LLC and Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 
-arrase_core was created by merging code from multiple repos. These are the commit ids 
+arras4_core was created by merging code from multiple repos. These are the commit ids
 in each source repo, corresponding to the initial commit in arras4_core
 
 arras4_client dde5903360860feb47eb936d0d3a7fa629987a3e
