@@ -1,4 +1,4 @@
-# Copyright 2023-2024 DreamWorks Animation LLC and Intel Corporation
+# Copyright 2023-2025 DreamWorks Animation LLC and Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 
 # -*- coding: utf-8 -*-
@@ -25,10 +25,22 @@ help = ('For assistance, '
         "please contact the folio's owner at: psw-jose@dreamworks.com")
 
 variants = [
-    ['os-rocky-9', 'refplat-vfx2023.1'],
-    ['os-rocky-9', 'refplat-vfx2024.0'],
-    ['os-rocky-9', 'refplat-vfx2025.0'],
-    ['os-rocky-9', 'refplat-vfx2022.0'],
+    [   # variant 0
+        'os-rocky-9',
+        'refplat-vfx2023.1'
+    ],
+    [   # variant 1
+        'os-rocky-9',
+        'refplat-vfx2024.0'
+    ],
+    [   # variant 2
+        'os-rocky-9',
+        'refplat-vfx2025.0'
+    ],
+    [   # variant 3
+        'os-rocky-9',
+        'refplat-vfx2022.0'
+    ],
 ]
 
 private_build_requires = [
