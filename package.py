@@ -39,6 +39,10 @@ variants = [
     ],
     [   # variant 3
         'os-rocky-9',
+        'refplat-houdini21.0'
+    ],
+    [   # variant 4
+        'os-rocky-9',
         'refplat-vfx2022.0'
     ],
 ]
