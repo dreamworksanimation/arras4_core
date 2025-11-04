@@ -50,3 +50,6 @@ boot
 
 
 /.vs
+
+# gha created files
+.ci_githooks
