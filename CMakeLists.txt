@@ -36,8 +36,7 @@ find_package(Boost REQUIRED
     chrono
     date_time
     filesystem
-    program_options
-    system)
+    program_options)
 
 if (IsWindowsPlatform)
     find_package(curl REQUIRED)

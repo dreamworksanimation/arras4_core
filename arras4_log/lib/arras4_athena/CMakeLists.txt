@@ -25,7 +25,7 @@ set_property(TARGET ${LibName}
 )
 
 if(IsUnixPlatform) # Linux/Darwin
-    set(PlatformSpecificLibs Boost::date_time Boost::system)
+    set(PlatformSpecificLibs Boost::date_time)
 elseif(IsWindowsPlatform)
     set(PlatformSpecificLibs ws2_32)
 endif()
