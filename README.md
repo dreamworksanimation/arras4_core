@@ -3,7 +3,7 @@ This repository contains the C++ libraries implementing Arras. The libraries are
 application arras_render, and by the MoonRay Hydra plugin HdMoonray.
 
 This repository is part of the larger MoonRay/Arras codebase.  It is included as a submodule in the top-level
-OpenMoonRay repository located here: [OpenMoonRay](https://github.com/dreamworksanimation/openmoonray)
+OpenMoonRay repository located here: [OpenMoonRay](https://github.com/OpenMoonRay/openmoonray)
 
 - **arras4_message_api** The API used to manipulate messages and create new message types.
 - **arras4_computation_api** The API used to implement new computations.
