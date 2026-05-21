@@ -1,9 +1,8 @@
-# arras4_core
+# arras4_core - part of the [MoonRay](https://github.com/OpenMoonRay/openmoonray) project
+Policies concerning [Governance](https://github.com/OpenMoonRay/openmoonray/blob/main/GOVERNANCE.md), [Code of Conduct](https://github.com/OpenMoonRay/openmoonray/blob/main/CODE_OF_CONDUCT.md), [Contribution](https://github.com/OpenMoonRay/openmoonray/blob/main/CONTRIBUTING.md), and the list of [Maintainers](https://github.com/OpenMoonRay/openmoonray/blob/main/MAINTAINERS.md) are available in the overarching MoonRay project, defined in the [`OpenMoonRay/openmoonray` GitHub repository superproject](https://github.com/OpenMoonRay/openmoonray).
+
 This repository contains the C++ libraries implementing Arras. The libraries are required by the example
 application arras_render, and by the MoonRay Hydra plugin HdMoonray.
-
-This repository is part of the larger MoonRay/Arras codebase.  It is included as a submodule in the top-level
-OpenMoonRay repository located here: [OpenMoonRay](https://github.com/OpenMoonRay/openmoonray)
 
 - **arras4_message_api** The API used to manipulate messages and create new message types.
 - **arras4_computation_api** The API used to implement new computations.
@@ -13,4 +12,3 @@ OpenMoonRay repository located here: [OpenMoonRay](https://github.com/OpenMoonRa
 - **arras4_core_impl** Implementation of Arras messaging and computation host using sockets.
 - **arras4_test** Test messages, computations and clients for Arras.
 
-Policies concerning [Governance](https://github.com/OpenMoonRay/openmoonray/blob/main/GOVERNANCE.md), [Code of Conduct](https://github.com/OpenMoonRay/openmoonray/blob/main/CODE_OF_CONDUCT.md), [Contribution](https://github.com/OpenMoonRay/openmoonray/blob/main/CONTRIBUTING.md), and the list of [Maintainers](https://github.com/OpenMoonRay/openmoonray/blob/main/MAINTAINERS.md) are available in the OpenMoonRay super project.
