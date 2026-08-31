@@ -9,7 +9,7 @@
 #include <iomanip>
 
 #include <boost/asio/buffer.hpp>
-#include <boost/asio/io_service.hpp>
+#include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/udp.hpp>
 #include <boost/asio/ip/address.hpp>
 #include <boost/asio/ip/host_name.hpp>
@@ -38,11 +38,9 @@ class UdpSyslog
 
         // resolve hostname to target endpoint
         boost::asio::ip::udp::resolver hostNameResolver(mService);
-        boost::asio::ip::udp::resolver::query q(boost::asio::ip::udp::v4(),
-                                                addr,
-                                                std::to_string(port), 
-                                                boost::asio::ip::resolver_query_base::address_configured);
-        mTarget = *hostNameResolver.resolve(q);
+        auto results = hostNameResolver.resolve(boost::asio::ip::udp::v4(), addr, std::to_string(port));
+        mTarget = *results.begin();
+
 
         // get local host name
         boost::system::error_code err;
@@ -61,7 +59,7 @@ class UdpSyslog
       
 private:
 
-    boost::asio::io_service mService;
+    boost::asio::io_context mService;
     boost::asio::ip::udp::socket mSocket;
     boost::asio::ip::udp::endpoint mTarget;
     std::string mLocalHostName;
