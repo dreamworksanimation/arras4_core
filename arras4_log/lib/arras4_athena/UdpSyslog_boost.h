@@ -36,6 +36,12 @@ class UdpSyslog
         boost::asio::ip::udp::endpoint anyAddress;
         mSocket.bind(anyAddress);
 
+        // Athena logging is best-effort telemetry and must never stall the
+        // caller. This logger is used directly from latency-sensitive Arras
+        // message paths, so a blocking UDP send can otherwise stop scene
+        // updates when no local syslog daemon is draining port 514.
+        mSocket.non_blocking(true);
+
         // resolve hostname to target endpoint
         boost::asio::ip::udp::resolver hostNameResolver(mService);
         auto results = hostNameResolver.resolve(boost::asio::ip::udp::v4(), addr, std::to_string(port));
