@@ -6,8 +6,6 @@
 namespace arras4 {
 namespace log {
 
-const int MAX_SENDTO_RETRIES = 5;
-
 void UdpSyslog::sendMessage(int priority, 
                             const tm* timeStamp,
                             const std::string& ident, 
@@ -45,21 +43,14 @@ void UdpSyslog::sendMessage(int priority,
    
     std::string packet = ss.str();
 
-    // send_to can on rare occassons throw system_error because the underlying
-    // system call sendto() can randomly return EPERM. Just retry and in the
-    // extremely unlikely case of not working on retries then just drop it
-    for (int i = 0; i < MAX_SENDTO_RETRIES; i++) {
-        try {
-            mSocket.send_to(boost::asio::buffer(packet.data(), packet.size()), mTarget);
-
-            // if it succeeds then break out of the loop
-            break; 
-        } catch (const boost::system::system_error& e) {
-            if (e.code() != boost::asio::error::basic_errors::no_permission) {
-                throw;
-            }
-        }
-    }
+    // The socket is non-blocking because this path is called inline from Arras
+    // message delivery. Drop telemetry when the UDP target is unavailable or
+    // its send buffer is full; logging must not delay or abort rendering.
+    boost::system::error_code error;
+    mSocket.send_to(boost::asio::buffer(packet.data(), packet.size()),
+                    mTarget,
+                    0,
+                    error);
 }
 
 }
